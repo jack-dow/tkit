@@ -94,13 +94,13 @@ function groupOverlappingBookings(dayjs: Dayjs, bookings: Booking[]) {
 }
 
 const colStartClasses = [
-	"sm:col-start-7",
 	"sm:col-start-1",
 	"sm:col-start-2",
 	"sm:col-start-3",
 	"sm:col-start-4",
 	"sm:col-start-5",
 	"sm:col-start-6",
+	"sm:col-start-7",
 ];
 
 const bookingCardColors = {
@@ -573,7 +573,7 @@ function WeekView({
 											className={cn(
 												bookingStart.date() === visibleDate ? "flex" : "hidden",
 												"relative mt-px sm:flex col-start-1",
-												colStartClasses.at(bookingStart.day()),
+												colStartClasses.at(bookingStart.diff(startDate, "day")),
 											)}
 											style={{
 												gridRow: `${Math.floor((288 / 24) * time + 2)}`,

@@ -14,6 +14,7 @@ async function BookingsPage({ searchParams }: { searchParams?: SearchParams }) {
 	const validatedSearchParams = PaginationOptionsSchema.extend({
 		from: z.string().optional().catch(undefined),
 		to: z.string().optional().catch(undefined),
+		sortDirection: PaginationOptionsSchema.shape.sortDirection.default("desc"),
 	}).parse(searchParams);
 
 	const response = await server.app.bookings.all.query(validatedSearchParams);
