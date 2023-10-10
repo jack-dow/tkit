@@ -334,7 +334,6 @@ function BookingFields({
 													const date = dayjs.tz(form.getValues("date"));
 													const time = dayjs(value, "HH:mm");
 													const newDate = date.set("hour", time.hour()).set("minute", time.minute()).set("seconds", 0);
-													console.log(newDate.toDate());
 													field.onChange(newDate.toDate());
 												}
 											}}

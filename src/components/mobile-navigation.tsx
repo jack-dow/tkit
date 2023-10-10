@@ -3,12 +3,13 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { Button } from "~/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "~/components/ui/sheet";
 import { useSession } from "~/app/providers";
 import TKITLogo from "~/assets/tkit-logo.svg";
+import { useDidUpdate } from "~/hooks/use-did-update";
 import { api } from "~/lib/trpc/client";
 import { cn } from "~/lib/utils";
 import { navigation } from "./desktop-sidebar";
@@ -28,15 +29,24 @@ import { useToast } from "./ui/use-toast";
 function MobileNavigation() {
 	const session = useSession();
 	const pathname = usePathname();
+	const searchParams = useSearchParams();
 	const router = useRouter();
 	const { toast } = useToast();
+
+	const [isNavigating, setIsNavigating] = React.useState<string | false>(false);
+	const [isMobileNavigationOpen, setIsMobileNavigationOpen] = React.useState(false);
 
 	const [isSigningOut, setIsSigningOut] = React.useState(false);
 
 	const signOutMutation = api.auth.user.signOut.useMutation();
 
+	useDidUpdate(() => {
+		setIsNavigating(false);
+		setIsMobileNavigationOpen(false);
+	}, [pathname, searchParams]);
+
 	return (
-		<Sheet>
+		<Sheet open={isMobileNavigationOpen} onOpenChange={setIsMobileNavigationOpen}>
 			<SheetTrigger asChild className="fixed bottom-6 left-4 z-50 shadow-md lg:hidden">
 				<Button variant="outline" size="icon" className="h-14 w-14 rounded-full">
 					<MobileMenuIcon className="h-5 w-5" />
@@ -86,6 +96,7 @@ function MobileNavigation() {
 												<Link
 													aria-disabled={item.disabled}
 													href={item.disabled ? "#" : item.href}
+													onClick={() => setIsNavigating(item.href)}
 													className={cn(
 														current
 															? "text-zinc-950"
@@ -108,7 +119,8 @@ function MobileNavigation() {
 														)}
 														aria-hidden="true"
 													/>
-													{item.name}
+													{item.name}{" "}
+													{isNavigating === item.href && <Loader size="sm" variant="black" className="-ml-2" />}
 												</Link>
 											</li>
 											{current && item.subNavigation && (
@@ -130,6 +142,7 @@ function MobileNavigation() {
 
 																	<Link
 																		href={subItem.href}
+																		onClick={() => setIsNavigating(subItem.href)}
 																		className={cn(
 																			current
 																				? "bg-zinc-50 text-zinc-950 shadow-sm"
@@ -148,6 +161,9 @@ function MobileNavigation() {
 																			</div>
 																		</div>
 																		{subItem.name}
+																		{isNavigating === subItem.href && (
+																			<Loader size="sm" variant="black" className="-ml-2" />
+																		)}
 																	</Link>
 																</div>
 															</li>

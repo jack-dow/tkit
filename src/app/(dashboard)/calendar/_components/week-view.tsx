@@ -9,7 +9,14 @@ import { type BOOKING_TYPES_COLORS } from "~/components/manage-booking-types/boo
 import { ManageBookingDialog } from "~/components/manage-booking/manage-booking-dialog";
 import { Button } from "~/components/ui/button";
 import { Calendar } from "~/components/ui/calendar";
-import { CalendarDaysIcon, ChevronLeftIcon, ChevronRightIcon, DogIcon, EditIcon } from "~/components/ui/icons";
+import {
+	CalendarDaysIcon,
+	ChevronLeftIcon,
+	ChevronRightIcon,
+	DogIcon,
+	EditIcon,
+	FunnelIcon,
+} from "~/components/ui/icons";
 import { Label } from "~/components/ui/label";
 import { Loader } from "~/components/ui/loader";
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
@@ -127,7 +134,7 @@ function WeekView({
 	const { dayjs } = useDayjs();
 	const user = useUser();
 
-	const date = _date ? dayjs.utc(_date).local() : dayjs.tz();
+	const date = (_date ? dayjs.utc(_date).local() : dayjs.tz()).startOf("day");
 
 	const {
 		data: { data: bookings },
@@ -190,6 +197,7 @@ function WeekView({
 	useDidUpdate(() => {
 		if (isLoading) {
 			setIsLoading(false);
+			setVisibleDate(date.date());
 		}
 	}, [searchParams]);
 
@@ -228,18 +236,20 @@ function WeekView({
 
 	return (
 		<div className="max-h-screen overflow-hidden">
-			<header className="flex flex-none flex-col justify-between gap-4 px-5 py-4 sm:flex-row sm:items-center">
-				<div className="flex items-center gap-x-3">
-					<h1 className="text-2xl font-semibold leading-6 text-gray-900">
-						{startDate.format("MMMM")} <span className="font-normal">{startDate.format("YYYY")}</span>
+			<header className="flex flex-none justify-between gap-x-4 gap-y-3 px-4 py-2 sm:flex-row sm:items-center sm:p-4">
+				<div className="flex flex-1 items-center justify-between gap-x-3 sm:flex-none">
+					<h1 className="text-xl font-semibold leading-6 text-gray-900 md:text-2xl">
+						{startDate.format("MMMM")}{" "}
+						{startDate.year() !== endDate.year() && <span className="font-normal">{startDate.format("YYYY")}</span>}
 						{startDate.month() !== endDate.month() && (
 							<>
 								<span className="font-normal"> - </span>
-								{endDate.format("MMMM")} <span className="font-normal">{endDate.format("YYYY")}</span>
+								{endDate.format("MMMM")}{" "}
 							</>
 						)}
+						<span className="font-normal">{endDate.format("YYYY")}</span>
 					</h1>
-					<Separator orientation="vertical" className="h-6" />
+					<Separator orientation="vertical" className="hidden h-6 sm:block" />
 
 					<Popover>
 						<PopoverTrigger asChild>
@@ -248,7 +258,7 @@ function WeekView({
 								<CalendarDaysIcon className="h-5 w-5" aria-hidden="true" />
 							</Button>
 						</PopoverTrigger>
-						<PopoverContent className="w-auto p-0" align="end">
+						<PopoverContent className="w-auto p-0" align="center">
 							<Calendar
 								mode="single"
 								selected={startDate.toDate()}
@@ -256,6 +266,7 @@ function WeekView({
 									setIsLoading(true);
 									router.push(`/calendar?date=${dayjs.tz(value).format("YYYY-MM-DD")}`);
 								}}
+								defaultMonth={startDate.toDate()}
 								initialFocus
 							/>
 						</PopoverContent>
@@ -263,7 +274,7 @@ function WeekView({
 				</div>
 
 				<div className="flex items-center justify-between gap-x-3 md:gap-x-5">
-					<div className="flex items-center gap-x-1.5">
+					<div className="hidden items-center gap-x-1.5 sm:flex">
 						{isLoading && <Loader variant="black" size="sm" />}
 
 						{
@@ -293,8 +304,8 @@ function WeekView({
 					<Separator orientation="vertical" className="h-6" />
 
 					<Select value={assignedToId}>
-						<SelectTrigger className="flex h-8 gap-1 space-x-0 bg-white text-xs">
-							<span>
+						<SelectTrigger className="flex h-8 w-auto gap-1 space-x-0 bg-white text-xs">
+							<span className="hidden md:inline">
 								{assignedTo ? (
 									<>
 										{assignedTo.givenName} {assignedTo.familyName}
@@ -302,6 +313,9 @@ function WeekView({
 								) : (
 									"User not found"
 								)}
+							</span>
+							<span className="md:hidden">
+								<FunnelIcon className="h-4 w-4" />
 							</span>
 						</SelectTrigger>
 						<SelectContent className="pointer-events-none w-44" align="start">
@@ -367,14 +381,14 @@ function WeekView({
 											setVisibleDate(date.date());
 										}}
 										className={cn(
-											"sm:hidden flex flex-col items-center pb-3 pt-2 rounded-md focus-visible:relative focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring",
+											"sm:hidden flex flex-col items-center p-0.5 leading-snug rounded-md focus-visible:relative focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring",
 											date.date() === visibleDate && "bg-primary text-primary-foreground ",
 										)}
 									>
 										{date.format("dd")}
 										<span
 											className={cn(
-												"mt-1 flex h-8 w-8 items-center justify-center font-semibold",
+												"flex items-center justify-center font-semibold",
 												date.date() === visibleDate ? "text-white" : "text-primary",
 											)}
 										>

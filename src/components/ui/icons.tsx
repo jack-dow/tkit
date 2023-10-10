@@ -31,7 +31,7 @@ import {
 	UserPlusIcon,
 	XMarkIcon,
 } from "@heroicons/react/20/solid";
-import { ExclamationTriangleIcon as ExclamationTriangleOutlineIcon } from "@heroicons/react/24/outline";
+import { ExclamationTriangleIcon as ExclamationTriangleOutlineIcon, FunnelIcon } from "@heroicons/react/24/outline";
 import {
 	Square2StackIcon as BookingIcon,
 	CalendarDaysIcon,
@@ -696,6 +696,7 @@ export {
 	EyeIcon,
 	ExclamationTriangleOutlineIcon,
 	EyeSlashIcon,
+	FunnelIcon,
 	InvoiceIcon,
 	PlusIcon,
 	TrashIcon,

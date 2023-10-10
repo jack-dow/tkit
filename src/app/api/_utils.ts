@@ -9,7 +9,6 @@ export async function verifyAPISession() {
 
 	const sessionToken = sessionCookie?.value;
 
-	console.log(sessionToken);
 	if (!sessionToken) {
 		return {
 			success: false,

@@ -30,33 +30,6 @@ async function WeeklyCalendar({ searchParams }: { searchParams: SearchParams }) 
 		server.auth.user.organization.query(),
 	]);
 
-	// const bookingTypes = [
-	// 	{
-	// 		id: "utzx6i2afvha32zajgef3v57",
-	// 		name: "Busy",
-	// 		duration: 1800,
-	// 		color: "gray",
-	// 		showDetailsInCalendar: false,
-	// 		isDefault: false,
-	// 	},
-	// 	{
-	// 		id: "jb9cckaphbs3p1xs4uubc8ja",
-	// 		name: "Follow up session",
-	// 		duration: 1800,
-	// 		color: "sky",
-	// 		showDetailsInCalendar: false,
-	// 		isDefault: true,
-	// 	},
-	// 	{
-	// 		id: "xp5u04mdvm6ognnz7z7tm9xr",
-	// 		name: "Initial Consultation",
-	// 		duration: 3600,
-	// 		color: "red",
-	// 		showDetailsInCalendar: false,
-	// 		isDefault: false,
-	// 	},
-	// ];
-
 	return (
 		<WeekView
 			date={date?.toISOString()}

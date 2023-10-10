@@ -1,5 +1,4 @@
 import dayjs from "dayjs";
-import updateLocale from "dayjs/plugin/updateLocale";
 import { and, eq, gte, lt, sql } from "drizzle-orm";
 import { z } from "zod";
 
@@ -9,11 +8,6 @@ import { env } from "~/env.mjs";
 import { getBaseUrl, logInDevelopment, PaginationOptionsSchema, validatePaginationSearchParams } from "~/lib/utils";
 import { createTRPCRouter, protectedProcedure } from "../../trpc";
 import { BOOKINGS_SORTABLE_COLUMNS } from "../sortable-columns";
-
-dayjs.extend(updateLocale);
-dayjs.updateLocale("en", {
-	weekStart: 1,
-});
 
 export const bookingsRouter = createTRPCRouter({
 	all: protectedProcedure
@@ -121,27 +115,14 @@ export const bookingsRouter = createTRPCRouter({
 				extras: {
 					endDate: sql<Date>`date_add(${bookings.date}, INTERVAL ${bookings.duration} SECOND)`.as("end_date"),
 				},
-				where: (bookings, { and, eq, or, lte, gt, gte, ne }) =>
+				where: (bookings, { and, eq, lte, gte, ne }) =>
 					and(
 						ne(bookings.id, input.bookingId),
 						eq(bookings.organizationId, ctx.user.organizationId),
 						eq(bookings.assignedToId, assignedToId),
-						or(
-							// Check if new booking starts during an existing booking
-							and(
-								lte(bookings.date, date),
-								gt(sql<Date>`date_add(${bookings.date}, INTERVAL ${bookings.duration} SECOND)`, date),
-							),
-							// Check if new booking ends during an existing booking
-							and(
-								lt(bookings.date, endDate),
-								gte(sql<Date>`date_add(${bookings.date}, INTERVAL ${bookings.duration} SECOND)`, endDate),
-							),
-							// Check if new booking completely overlaps with an existing booking
-							and(
-								gte(bookings.date, date),
-								lte(sql<Date>`date_add(${bookings.date}, INTERVAL ${bookings.duration} SECOND)`, endDate),
-							),
+						and(
+							lte(bookings.date, endDate),
+							gte(sql<Date>`date_add(${bookings.date}, INTERVAL ${bookings.duration} SECOND)`, date),
 						),
 					),
 			});
@@ -231,11 +212,10 @@ export const bookingsRouter = createTRPCRouter({
 			const data = await ctx.db.query.bookings.findMany({
 				where: and(
 					eq(bookings.organizationId, ctx.user.organizationId),
-					// -12 hours to +14 hours to account for timezone differences
-					// Not using .startOf week as it can become the wrong week.
-					// E.g. If a user from Brisbane (UTC+10) views the calendar at 8am on Monday, it will show the previous week as it would be 10pm Sunday UTC.
-					gte(bookings.date, date.toDate()),
-					lt(bookings.date, date.add(7, "days").toDate()),
+					// -14/+12 hours to account for timezones. Easier to do this than to manage conversion based on user's timezone.
+					// And it shouldn't over-fetch too much.
+					gte(bookings.date, date.subtract(14, "hours").toDate()),
+					lt(bookings.date, date.add(7, "days").add(12, "hours").toDate()),
 					input?.assignedTo ? eq(bookings.assignedToId, input.assignedTo) : undefined,
 				),
 				orderBy: (bookings, { asc, desc }) => [asc(bookings.date), desc(bookings.duration), asc(bookings.id)],

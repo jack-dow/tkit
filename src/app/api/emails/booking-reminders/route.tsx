@@ -28,17 +28,6 @@ async function GET(request: NextRequest): Promise<NextResponse<SendBookingRemind
 	}
 
 	try {
-		console.log(
-			"2 day",
-			new Date(new Date().getTime() + 1 * 24 * 60 * 60 * 1000),
-			new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000),
-		);
-		console.log(
-			"7 day",
-			new Date(new Date().getTime() + 6 * 24 * 60 * 60 * 1000),
-			new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
-		);
-
 		const bookings = await drizzle.query.bookings.findMany({
 			columns: {
 				duration: true,

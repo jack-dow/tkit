@@ -57,7 +57,7 @@ const BackgroundSVGs = {
 function AuthLayout({ children }: AuthLayoutProps) {
 	return (
 		<main className="relative flex flex-1 flex-col overflow-hidden px-4 py-8 sm:px-6 lg:px-8">
-			<div className="relative isolate flex h-full flex-1 flex-col  px-4 sm:px-6 lg:px-8">
+			<div className="relative isolate flex h-full flex-1 flex-col sm:px-6 lg:px-8">
 				<BackgroundSVGs.GradientTop />
 				<BackgroundSVGs.GridTop />
 				<div className="relative flex flex-1 flex-col items-center justify-center ">{children}</div>
