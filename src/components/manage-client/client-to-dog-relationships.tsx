@@ -196,7 +196,7 @@ function ClientToDogRelationships({
 				</div>
 
 				<div className="sm:col-span-6">
-					<ul role="list" className="divide-y divide-slate-100">
+					<ul role="list" className="divide-y divide-zinc-100">
 						{dogToClientRelationships.fields.map((dogToClientRelationship, index) => (
 							<ClientToDogRelationship
 								key={dogToClientRelationship.id}
@@ -242,14 +242,14 @@ function ClientToDogRelationship({
 			className={cn("flex items-center justify-between gap-x-6", index === 0 ? "pb-4" : "py-4")}
 		>
 			<div className="flex shrink items-center gap-x-2 truncate">
-				<div className="flex h-10 w-10 flex-none items-center justify-center rounded-full bg-slate-50">
+				<div className="flex h-10 w-10 flex-none items-center justify-center rounded-full bg-zinc-50">
 					<DogIcon className="h-5 w-5" />
 				</div>
 				<div className="min-w-0 flex-auto">
 					<p className="truncate text-sm font-semibold capitalize leading-6 text-primary">
 						{dogToClientRelationship.dog.givenName} {dogToClientRelationship.dog.familyName}
 					</p>
-					<p className="truncate text-xs capitalize leading-5 text-slate-500">{dogToClientRelationship.dog.color}</p>
+					<p className="truncate text-xs capitalize leading-5 text-zinc-500">{dogToClientRelationship.dog.color}</p>
 				</div>
 			</div>
 			<div className="flex space-x-4">
@@ -342,7 +342,7 @@ function ClientToDogRelationship({
 
 				<div className="flex items-center">
 					<DropdownMenu>
-						<DropdownMenuTrigger className="flex items-center rounded-full text-slate-400 hover:text-slate-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
+						<DropdownMenuTrigger className="flex items-center rounded-full text-zinc-400 hover:text-zinc-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
 							<span className="sr-only">Open options</span>
 							<EllipsisVerticalIcon className="h-5 w-5" />
 						</DropdownMenuTrigger>

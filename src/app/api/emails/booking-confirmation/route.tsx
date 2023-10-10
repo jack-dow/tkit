@@ -152,7 +152,7 @@ async function POST(request: NextRequest): Promise<NextResponse<SendBookingConfi
 		}
 
 		await resend.emails.send({
-			from: "Dogworx Management <bookings@dogworx.com.au>",
+			from: "TKIT <bookings@tkit.app>",
 			to: [
 				// ...booking.dog.dogToClientRelationships.map((relationship) => relationship.client.emailAddress),
 				"bookings@dogworx.com.au",

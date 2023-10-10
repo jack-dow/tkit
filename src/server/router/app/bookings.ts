@@ -1,4 +1,3 @@
-import { TRPCError } from "@trpc/server";
 import dayjs from "dayjs";
 import updateLocale from "dayjs/plugin/updateLocale";
 import { and, eq, gte, lt, sql } from "drizzle-orm";
@@ -218,17 +217,16 @@ export const bookingsRouter = createTRPCRouter({
 		}),
 
 	byWeek: protectedProcedure
-		.input(z.object({ date: z.string().optional() }).optional())
+		.input(
+			z
+				.object({
+					date: z.string().pipe(z.coerce.date()).optional().catch(undefined),
+					assignedTo: z.string().optional(),
+				})
+				.optional(),
+		)
 		.query(async ({ ctx, input }) => {
 			const date = dayjs(input?.date).startOf("day");
-			const day = date.day();
-
-			if (!date.isValid) {
-				throw new TRPCError({
-					code: "BAD_REQUEST",
-					message: "Invalid date",
-				});
-			}
 
 			const data = await ctx.db.query.bookings.findMany({
 				where: and(
@@ -236,22 +234,11 @@ export const bookingsRouter = createTRPCRouter({
 					// -12 hours to +14 hours to account for timezone differences
 					// Not using .startOf week as it can become the wrong week.
 					// E.g. If a user from Brisbane (UTC+10) views the calendar at 8am on Monday, it will show the previous week as it would be 10pm Sunday UTC.
-					gte(
-						bookings.date,
-						date
-							.subtract(day === 0 ? 7 : day - 1, "day")
-							.subtract(14, "hours")
-							.toDate(),
-					),
-					lt(
-						bookings.date,
-						date
-							.endOf("day")
-							.add(day === 0 ? 0 : 7 - day, "day")
-							.add(12, "hours")
-							.toDate(),
-					),
+					gte(bookings.date, date.toDate()),
+					lt(bookings.date, date.add(7, "days").toDate()),
+					input?.assignedTo ? eq(bookings.assignedToId, input.assignedTo) : undefined,
 				),
+				orderBy: (bookings, { asc, desc }) => [asc(bookings.date), desc(bookings.duration), asc(bookings.id)],
 				with: {
 					dog: {
 						columns: {

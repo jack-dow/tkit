@@ -76,3 +76,4 @@ const RichTextEditor = React.forwardRef<HTMLDivElement, RichEditorProps>(
 RichTextEditor.displayName = "RichTextEditor";
 
 export { RichTextEditor };
+export default RichTextEditor;

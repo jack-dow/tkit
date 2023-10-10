@@ -31,7 +31,7 @@ function SignInForm() {
 	const reference = searchParams.get("ref");
 
 	async function onSubmit(data: SignInSchema) {
-		if (process.env.NODE_ENV === "development" || data.emailAddress.toLowerCase() === "test@dogworx.com.au") {
+		if (process.env.NODE_ENV === "development" || data.emailAddress.toLowerCase() === "test@tkit.app") {
 			router.push(
 				`/verification-code?emailAddress=${encodeURIComponent(data.emailAddress)}${
 					from ? `&from=${encodeURIComponent(from)}` : ""
@@ -91,7 +91,7 @@ function SignInForm() {
 
 	return (
 		<Form {...form}>
-			<form className="grid gap-4" onSubmit={(...args) => void form.handleSubmit(onSubmit)(...args)}>
+			<form className="grid gap-2" onSubmit={(...args) => void form.handleSubmit(onSubmit)(...args)}>
 				<FormField
 					control={form.control}
 					name="emailAddress"
@@ -99,7 +99,7 @@ function SignInForm() {
 						<FormItem>
 							<FormLabel>Email</FormLabel>
 							<FormControl>
-								<Input {...field} />
+								<Input placeholder="name@example.com" {...field} />
 							</FormControl>
 							<FormMessage />
 						</FormItem>
@@ -108,7 +108,7 @@ function SignInForm() {
 
 				<Button type="submit" disabled={form.formState.isSubmitting}>
 					{form.formState.isSubmitting && <Loader aria-hidden="true" size="sm" />}
-					Continue
+					Sign in with email
 				</Button>
 			</form>
 		</Form>

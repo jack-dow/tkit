@@ -69,7 +69,11 @@ function ManageClientForm({ client, onSubmit, onSuccessfulSubmit }: UseManageCli
 					<div className="flex items-center justify-end space-x-3">
 						{!isNew && (
 							<>
-								<ClientDeleteDialog />
+								<ClientDeleteDialog
+									onSuccessfulDelete={() => {
+										router.push("/clients");
+									}}
+								/>
 								<Separator orientation="vertical" className="h-4" />
 							</>
 						)}

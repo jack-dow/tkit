@@ -20,9 +20,9 @@ function PageHeader({ title, back }: PageHeaderProps) {
 					<nav aria-label="Back" className="flex">
 						<Link
 							href={back.href}
-							className="flex items-center rounded-sm text-sm font-medium capitalize text-slate-500 hover:text-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring "
+							className="flex items-center rounded-sm text-sm font-medium capitalize text-zinc-500 hover:text-zinc-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring "
 						>
-							<ChevronLeftIcon className="-ml-1 mr-0.5 h-5 w-5 shrink-0 text-slate-400" aria-hidden="true" />
+							<ChevronLeftIcon className="-ml-1 mr-0.5 h-5 w-5 shrink-0 text-zinc-400" aria-hidden="true" />
 							<span>
 								{back.label ?? back.href === "/" ? "Dashboard" : back.href.split("/")[1]?.split("-").join(" ")}
 							</span>

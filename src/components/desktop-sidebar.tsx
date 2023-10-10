@@ -6,10 +6,10 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
 import { useSession } from "~/app/providers";
-import DogworxPawLogoGradient from "~/assets/dogworx-paw-logo-gradient.svg";
+import TKITLogoWhite from "~/assets/tkit-logo-white.svg";
+// import TKITLogo from "~/assets/tkit-logo.svg";
 import { api } from "~/lib/trpc/client";
 import { cn } from "~/lib/utils";
-import { navigation } from "./dark-desktop-sidebar";
 import { Button } from "./ui/button";
 import {
 	DropdownMenu,
@@ -19,11 +19,61 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { LogOutIcon, UserIcon } from "./ui/icons";
+import {
+	BookingIcon,
+	CalendarDaysIcon,
+	ClientsIcon,
+	DogIcon,
+	LogOutIcon,
+	SettingsIcon,
+	UserIcon,
+	VetClinicIcon,
+	VetsIcon,
+} from "./ui/icons";
 import { Loader } from "./ui/loader";
+import { Separator } from "./ui/separator";
 import { useToast } from "./ui/use-toast";
 
-function DesktopSidebar() {
+type Navigation = {
+	name: string;
+	href: string;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	icon: (...args: any[]) => JSX.Element | React.ReactNode;
+	disabled: boolean;
+	adminOnly?: boolean;
+	subNavigation?: Array<{
+		name: string;
+		href: string;
+	}>;
+};
+
+export const navigation = [
+	{ name: "Calendar", href: "/calendar", icon: CalendarDaysIcon, disabled: false },
+	{ name: "Dogs", href: "/dogs", icon: DogIcon, disabled: false },
+	{ name: "Clients", href: "/clients", icon: ClientsIcon, disabled: false },
+	{ name: "Vets", href: "/vets", icon: VetsIcon, disabled: false },
+	{ name: "Vet Clinics", href: "/vet-clinics", icon: VetClinicIcon, disabled: false },
+	{ name: "Bookings", href: "/bookings", icon: BookingIcon, disabled: false },
+	{
+		name: "Settings",
+		href: "/settings/organization",
+		icon: SettingsIcon,
+		disabled: false,
+		adminOnly: true,
+		subNavigation: [
+			{
+				name: "Organization",
+				href: "/settings/organization",
+			},
+			{
+				name: "Booking types",
+				href: "/settings/booking-types",
+			},
+		],
+	},
+] satisfies Array<Navigation>;
+
+function DarkDesktopSidebar() {
 	const session = useSession();
 	const pathname = usePathname();
 	const router = useRouter();
@@ -34,16 +84,23 @@ function DesktopSidebar() {
 	const signOutMutation = api.auth.user.signOut.useMutation();
 
 	return (
-		<div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col 2xl:w-80">
+		<div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
 			{/* Sidebar component, swap this element with another sidebar if you like */}
-			<div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-slate-200 bg-white px-6 shadow-sm">
+			<div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-950 px-6">
 				<div className="flex shrink-0 items-center pb-3 pt-6">
 					<Link
 						href="/"
 						shallow
 						className="rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
 					>
-						<Image src={DogworxPawLogoGradient as string} priority alt="Dogworx Paw Logo (Gradient Version)" />
+						<Image
+							src={TKITLogoWhite as string}
+							priority
+							alt="Dogworx Paw Logo (Gradient Version)"
+							className="w-10"
+							width={40}
+							height={40}
+						/>
 					</Link>
 				</div>
 				<nav className="flex flex-1 flex-col">
@@ -66,34 +123,45 @@ function DesktopSidebar() {
 
 									return (
 										<React.Fragment key={`desktop-${item.name}`}>
-											<li>
+											<li className="group relative">
+												<div className="absolute -left-4 h-full py-2">
+													<Separator
+														className={cn(
+															"h-full w-[2px] pl-[2px] transition duration-75",
+															current ? "bg-white" : !item.disabled ? "bg-gray-950 group-hover:bg-white" : "",
+														)}
+													/>
+												</div>
 												<Link
 													aria-disabled={item.disabled}
 													href={item.disabled ? "#" : item.href}
 													className={cn(
 														current
-															? "bg-slate-50 text-indigo-600"
+															? // "bg-gray-900 text-zinc-50 border border-zinc-300/5"
+															  "text-white"
 															: !item.disabled
-															? "text-slate-700 hover:text-indigo-600 hover:bg-slate-50"
-															: "opacity-25 cursor-not-allowed text-slate-700 hover:bg-transparent hover:text-slate-700",
-														"group flex gap-x-3 rounded-md p-2 font-medium text-base leading-6 items-center",
+															? // "text-zinc-300 hover:bg-gray-900 hover:text-zinc-50 border hover:border-zinc-300/5"
+															  "text-zinc-200 hover:text-white"
+															: "opacity-40 cursor-not-allowed text-zinc-200",
+														"group flex gap-x-3 rounded-md p-2 font-medium text-base leading-6 items-center transition-colors duration-75",
 													)}
 												>
 													<item.icon
 														className={cn(
 															current
-																? "text-indigo-600"
+																? "text-white"
 																: !item.disabled
-																? "text-slate-400 group-hover:text-indigo-600"
-																: "cursor-not-allowed text-slate-700 hover:text-slate-700",
+																? "text-zinc-500 group-hover:text-white"
+																: "cursor-not-allowed text-zinc-700",
 
-															"h-5 w-5 shrink-0",
+															"h-6 w-6 shrink-0 transition-colors duration-75",
 														)}
 														aria-hidden="true"
 													/>
 													{item.name}
 												</Link>
 											</li>
+
 											{current && item.subNavigation && (
 												<ul role="list" className="flex flex-1 flex-col gap-y-2">
 													{Object.values(item.subNavigation).map((subItem, index) => {
@@ -102,11 +170,11 @@ function DesktopSidebar() {
 														const isLast = index === item.subNavigation.length - 1;
 
 														return (
-															<li key={`desktop-${subItem.name}`}>
+															<li key={"desktop-" + subItem.name}>
 																<div className={cn("relative flex justify-between")}>
 																	{!isLast ? (
 																		<span
-																			className="absolute left-[18px] top-6 -ml-px h-full w-0.5 bg-slate-200"
+																			className="absolute left-[18px] top-6 -ml-px h-full w-0.5 bg-slate-700"
 																			aria-hidden="true"
 																		/>
 																	) : null}
@@ -115,17 +183,23 @@ function DesktopSidebar() {
 																		href={subItem.href}
 																		className={cn(
 																			current
-																				? "bg-slate-50 text-indigo-600"
-																				: "text-slate-500 hover:text-indigo-600 hover:bg-slate-50",
-																			"relative w-full group flex gap-x-3 rounded-md p-2 font-normal text-base leading-6 items-center",
+																				? "border-zinc-300/5 bg-gray-900 text-zinc-50"
+																				: "text-zinc-300 hover:border-zinc-300/5 hover:bg-gray-900 hover:text-zinc-50",
+																			"group flex w-full gap-x-4 font-medium rounded-md border p-2 text-base leading-6 items-center",
+																			"focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
 																		)}
 																	>
-																		<div className="flex h-5 w-5 shrink-0 items-center justify-center">
-																			<div className="flex h-2 w-2 items-center justify-center rounded-full border border-input bg-white shadow">
+																		<div className="relative flex h-5 w-5 shrink-0 items-center justify-center">
+																			<div
+																				className={cn(
+																					"flex h-2 w-2 items-center justify-center rounded-full border shadow",
+																					current ? "bg-white border-white" : "bg-slate-600 border-slate-600",
+																				)}
+																			>
 																				<div
 																					className={cn(
-																						"h-1 w-1 rounded-full transition-colors",
-																						current ? "bg-primary" : "bg-muted group-hover:bg-indigo-600",
+																						"h-1 w-1 rounded-full transition-colors bg-slate-900",
+																						!current && "group-hover:bg-primary",
 																					)}
 																				/>
 																			</div>
@@ -149,10 +223,10 @@ function DesktopSidebar() {
 								<DropdownMenuTrigger asChild>
 									<Button
 										variant="ghost"
-										className="mb-2 flex h-auto w-full items-center justify-start gap-x-4 px-2 py-3"
+										className="mb-2 flex h-auto w-full items-center justify-start gap-x-4 border px-2 py-3 text-zinc-300 hover:border-zinc-300/5 hover:bg-gray-900 hover:text-zinc-50"
 									>
 										{session.user.profileImageUrl ? (
-											<div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-md bg-gray-100">
+											<div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-md bg-gray-800">
 												<Image
 													src={session.user.profileImageUrl}
 													alt="User's profile image"
@@ -162,23 +236,23 @@ function DesktopSidebar() {
 												/>
 											</div>
 										) : (
-											<div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-slate-100 ">
+											<div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-gray-800 ">
 												{session.user.givenName[0]}
 												{session.user.familyName?.[0]}
 											</div>
 										)}
 										<div className="flex flex-col justify-start">
 											<span className="sr-only">Open user settings</span>
-											<span aria-hidden="true" className="block text-left text-xs capitalize text-muted-foreground">
+											<span aria-hidden="true" className="block text-left text-xs capitalize text-zinc-50">
 												{session.user.organizationRole}
 											</span>
-											<span aria-hidden="true" className="mt-0.5 w-full text-left">
+											<span aria-hidden="true" className="mt-0.5 w-full text-left text-zinc-100">
 												{session.user.givenName} {session.user.familyName}
 											</span>
 										</div>
 									</Button>
 								</DropdownMenuTrigger>
-								<DropdownMenuContent className="w-[256px] 2xl:w-[288px]">
+								<DropdownMenuContent className="w-[256px]" align="center">
 									<p className="truncate px-2 py-1.5">
 										<span className="block text-xs text-muted-foreground">Signed in as</span>
 										<span className="mt-0.5 text-sm font-semibold">{session.user.emailAddress}</span>
@@ -232,4 +306,4 @@ function DesktopSidebar() {
 	);
 }
 
-export { DesktopSidebar };
+export { DarkDesktopSidebar };

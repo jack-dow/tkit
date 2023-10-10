@@ -215,9 +215,8 @@ function ManageOrganizationInviteLinkDialogForm({
 							>
 								<FormControl>
 									<SelectTrigger>
-										<SelectValue>
-											{/* This is required because field is black for a second on page load otherwise */}
-											<span>{field.value ? secondsToHumanReadable(field.value) : "Select a time"}</span>
+										<SelectValue placeholder="Select a time">
+											<span>{secondsToHumanReadable(field.value)}</span>
 										</SelectValue>
 									</SelectTrigger>
 								</FormControl>
@@ -252,9 +251,8 @@ function ManageOrganizationInviteLinkDialogForm({
 							>
 								<FormControl>
 									<SelectTrigger>
-										<SelectValue>
-											{/* This is required because field is black for a second on page load otherwise */}
-											<span className={cn(field.value && "capitalize")}>{field.value ?? "No limit"}</span>
+										<SelectValue placeholder="No limit">
+											<span className={cn(field.value && "capitalize")}>{field.value}</span>
 										</SelectValue>
 									</SelectTrigger>
 								</FormControl>

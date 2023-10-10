@@ -12,7 +12,7 @@ import { cn } from "~/lib/utils";
 import { TRPCReactProvider } from "./providers";
 
 export const metadata: Metadata = {
-	title: "Dogworx Management",
+	title: "Client Management System | TKIT",
 };
 
 // If loading a variable font, you don't need to specify the font weight
@@ -23,7 +23,7 @@ function RootLayout({ children }: { children: React.ReactNode }) {
 		<html lang="en" suppressHydrationWarning className="h-full">
 			<TRPCReactProvider headers={headers()}>
 				<TooltipProvider>
-					<body className={cn("min-h-full font-sans antialiased  flex flex-col text-slate-600", fontSans.variable)}>
+					<body className={cn("min-h-full font-sans antialiased flex flex-col text-zinc-600", fontSans.variable)}>
 						{children}
 						<TailwindIndicator />
 						<Toaster />

@@ -77,7 +77,7 @@ export function TRPCReactProvider(props: { children: React.ReactNode; headers: H
 		<api.Provider client={trpcClient} queryClient={queryClient}>
 			<QueryClientProvider client={queryClient}>
 				<ReactQueryStreamedHydration transformer={superjson}>{props.children}</ReactQueryStreamedHydration>
-				<ReactQueryDevtools initialIsOpen={false} />
+				<ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
 			</QueryClientProvider>
 		</api.Provider>
 	);

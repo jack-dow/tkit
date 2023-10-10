@@ -125,7 +125,7 @@ async function GET(request: NextRequest): Promise<NextResponse<SendBookingRemind
 				}
 
 				await resend.emails.send({
-					from: "Dogworx Management <bookings@dogworx.com.au>",
+					from: "TKIT <bookings@tkit.app>",
 					to: [
 						// ...booking.dog.dogToClientRelationships.map((relationship) => relationship.client.emailAddress),
 						"bookings@dogworx.com.au",

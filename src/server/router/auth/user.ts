@@ -196,6 +196,24 @@ export const userRouter = createTRPCRouter({
 			return { data: signedUrl };
 		}),
 
+	organization: protectedProcedure.query(async ({ ctx }) => {
+		const organization = await ctx.db.query.organizations.findFirst({
+			where: eq(organizations.id, ctx.user.organizationId),
+			with: {
+				organizationUsers: true,
+			},
+		});
+
+		if (!organization) {
+			throw new TRPCError({
+				code: "INTERNAL_SERVER_ERROR",
+				message: "Failed to find organization",
+			});
+		}
+
+		return { data: organization };
+	}),
+
 	sessions: createTRPCRouter({
 		current: publicProcedure
 			.input(z.object({ validate: z.boolean().optional() }).optional())

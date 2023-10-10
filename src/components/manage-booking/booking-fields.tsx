@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { parseDate } from "chrono-node";
 import ms from "ms";
@@ -19,11 +20,39 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/
 import { CalendarIcon, ChevronUpDownIcon, PlusIcon } from "../ui/icons";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { RichTextEditor } from "../ui/rich-text-editor";
 import { SearchCombobox, SearchComboboxAction } from "../ui/search-combobox";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
 import { TimeInput } from "../ui/time-input";
 import { type ManageBookingFormSchema } from "./use-manage-booking-form";
+
+function parseDurationToSeconds(str: string) {
+	let total = 0;
+	const days = str.match(/(\d+)\s*d/);
+	const hours = str.match(/(\d+)\s*h/);
+	const minutes = str.match(/(\d+)\s*m/);
+	const seconds = str.match(/(\d+)\s*s/);
+	if (days?.[1]) {
+		total += parseInt(days[1]) * 86400;
+	}
+	if (hours?.[1]) {
+		total += parseInt(hours[1]) * 3600;
+	}
+	if (minutes?.[1]) {
+		total += parseInt(minutes[1]) * 60;
+	}
+	if (seconds?.[1]) {
+		total += parseInt(seconds[1]);
+	}
+
+	return total;
+}
+
+const RichTextEditor = dynamic(() => import("../ui/rich-text-editor/rich-text-editor"), {
+	ssr: false,
+	loading: () => (
+		<div className="relative min-h-[150px] w-full rounded-md px-3 py-2 text-sm shadow-sm ring-1 ring-inset ring-input transition-colors focus-within:ring-inset focus-within:ring-ring" />
+	),
+});
 
 function convertToNumber(input: string): number | null {
 	// Step 1: Remove leading and trailing whitespace
@@ -108,7 +137,7 @@ function BookingFields({
 													"w-4 h-4 rounded-full absolute mt-0.5 left-2 flex items-center justify-center",
 													bookingType && bookingType?.color in BOOKING_TYPES_COLORS
 														? BOOKING_TYPES_COLORS[bookingType.color as keyof typeof BOOKING_TYPES_COLORS]
-														: "bg-violet-200",
+														: "bg-sky-200",
 												)}
 											/>
 											<span className="truncate capitalize">
@@ -146,7 +175,7 @@ function BookingFields({
 											<SelectItem value="default" className={"pl-8 capitalize"}>
 												<div
 													className={cn(
-														"w-4 h-4 rounded-full absolute mt-0.5 left-2 flex items-center justify-center bg-violet-200",
+														"w-4 h-4 rounded-full absolute mt-0.5 left-2 flex items-center justify-center bg-sky-200",
 													)}
 												/>
 												Default Booking
@@ -304,7 +333,8 @@ function BookingFields({
 												if (value) {
 													const date = dayjs.tz(form.getValues("date"));
 													const time = dayjs(value, "HH:mm");
-													const newDate = date.set("hour", time.hour()).set("minute", time.minute());
+													const newDate = date.set("hour", time.hour()).set("minute", time.minute()).set("seconds", 0);
+													console.log(newDate.toDate());
 													field.onChange(newDate.toDate());
 												}
 											}}
@@ -337,15 +367,15 @@ function BookingFields({
 											field.onChange(value * 60, { shouldValidate: true });
 										} else {
 											// Otherwise see if it is a valid time
-											let parsed = ms(value);
+											let parsed = parseDurationToSeconds(value);
 
-											if (parsed > 86400000) {
-												parsed = 86400000;
+											if (parsed > 86400) {
+												parsed = 86400;
 											}
 
 											// If it's a valid time, convert it to seconds and set it
-											if (parsed) {
-												field.onChange(parsed / 1000, { shouldValidate: true });
+											if (parsed > 0) {
+												field.onChange(parsed, { shouldValidate: true });
 											}
 										}
 									}

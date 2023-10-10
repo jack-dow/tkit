@@ -160,7 +160,7 @@ const MultiSelectSearchCombobox: WithForwardRefType = React.forwardRef(
 								classNames?.results,
 							)}
 						>
-							<CommandList className="rounded-md ring-1 ring-slate-200">
+							<CommandList className="rounded-md ring-1 ring-zinc-200">
 								{isLoading && (
 									<CommandPrimitive.Loading>
 										<div className="flex items-center justify-center py-6">

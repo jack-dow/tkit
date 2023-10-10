@@ -291,7 +291,7 @@ function OrganizationInviteLinkTableRow({
 				<div className="flex items-center justify-end">
 					{user.organizationRole !== "member" && (
 						<DropdownMenu>
-							<DropdownMenuTrigger className="flex items-center rounded-full text-slate-400 hover:text-slate-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
+							<DropdownMenuTrigger className="flex items-center rounded-full text-zinc-400 hover:text-zinc-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
 								<span className="sr-only">Open options</span>
 								<EllipsisVerticalIcon className="h-5 w-5" />
 							</DropdownMenuTrigger>

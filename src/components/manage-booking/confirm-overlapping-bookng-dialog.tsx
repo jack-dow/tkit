@@ -38,7 +38,7 @@ function ConfirmOverlappingBookingDialog({
 					<DialogTitle>Are you sure?</DialogTitle>
 					<DialogDescription>
 						{assignedTo?.givenName} {assignedTo?.familyName} already has a booking at this time. Are you sure you want
-						to create another booking?
+						to schedule another booking at this time?
 					</DialogDescription>
 				</DialogHeader>
 				<DialogFooter>
@@ -70,7 +70,7 @@ function ConfirmOverlappingBookingDialog({
 						}}
 					>
 						{isSubmitting && <Loader size="sm" />}
-						<span>Create overlapping booking</span>
+						<span>Confirm overlapping booking</span>
 					</Button>
 				</DialogFooter>
 			</DialogContent>

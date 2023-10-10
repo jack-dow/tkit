@@ -24,7 +24,7 @@ export async function middleware(request: NextRequest) {
 	const response =
 		session && (isAuthPage || pathname === "/")
 			? process.env.NODE_ENV !== "development"
-				? NextResponse.redirect(new URL("/calendar/week", request.url))
+				? NextResponse.redirect(new URL("/calendar", request.url))
 				: NextResponse.redirect(new URL("/test", request.url))
 			: NextResponse.next();
 

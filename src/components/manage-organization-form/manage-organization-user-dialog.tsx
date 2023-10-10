@@ -511,7 +511,7 @@ function AccountProfileImage({ setUploadedProfileImage }: { setUploadedProfileIm
 
 			<div className="relative flex w-full flex-1" {...getRootProps()}>
 				<div className={cn("z-10 w-full bg-white", isDragActive ? "absolute" : "hidden")}>
-					<div className="relative block w-full rounded-lg border-2 border-dashed border-slate-300 p-4 text-center hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+					<div className="relative block w-full rounded-lg border-2 border-dashed border-zinc-300 p-4 text-center hover:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
 						<input {...getInputProps()} />
 						<p className="font-semibold">Drop file here </p>
 						<p className="mt-1 text-sm text-muted-foreground">JPG and PNG only (max. 4MB) </p>

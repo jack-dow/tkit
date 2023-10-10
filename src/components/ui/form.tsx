@@ -180,7 +180,7 @@ function FormSection({ title, description, children }: FormSectionProps) {
 				<h2 className={formTitleClasses}>{title}</h2>
 				<p className={formDescriptionClasses}>{description}</p>
 			</div>
-			<div className="sm:rounded-xl sm:bg-white sm:shadow-sm sm:ring-1 sm:ring-slate-900/5 2xl:col-span-2">
+			<div className="sm:rounded-xl sm:bg-white sm:shadow-sm sm:ring-1 sm:ring-zinc-900/5 2xl:col-span-2">
 				<div className="sm:p-8">{children}</div>
 			</div>
 		</div>

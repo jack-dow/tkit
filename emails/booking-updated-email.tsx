@@ -81,10 +81,10 @@ const BookingReminderEmail = ({
 					<Container className="mx-auto my-[40px] max-w-[600px] rounded p-[20px]">
 						<Section className="mt-[32px]">
 							<Img
-								src={`${baseUrl}/static/dogworx-logo-gradient.png`}
+								src={`${baseUrl}/static/tkit-logo.png`}
 								width="60"
 								height="50"
-								alt="Dogworx Hydrotherapy"
+								alt="TKIT Logo"
 								className="mx-auto my-0"
 							/>
 						</Section>

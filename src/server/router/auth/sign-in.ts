@@ -94,8 +94,8 @@ export const signInRouter = createTRPCRouter({
 			// );
 			// await resend.sendEmail({
 			// 	to: emailAddress,
-			// 	from: "Dogworx Management <accounts@dogworx.com.au>",
-			// 	subject: `Your Dogworx Management Login`,
+			// 	from: "TKIT <accounts@tkit.app>",
+			// 	subject: `Your TKIT Login`,
 			// 	html,
 			// });
 		}),
@@ -115,7 +115,7 @@ export const signInRouter = createTRPCRouter({
 				});
 			}
 
-			if (magicLink?.user?.emailAddress.toLowerCase() !== "test@dogworx.com.au") {
+			if (magicLink?.user?.emailAddress.toLowerCase() !== "test@tkit.app") {
 				await ctx.db.delete(schema.verificationCodes).where(eq(schema.verificationCodes.id, magicLink.id));
 			}
 
@@ -212,7 +212,7 @@ export const signInRouter = createTRPCRouter({
 				});
 			}
 
-			if (verificationCode?.user?.emailAddress.toLowerCase() !== "test@dogworx.com.au") {
+			if (verificationCode?.user?.emailAddress.toLowerCase() !== "test@tkit.app") {
 				await ctx.db.delete(schema.verificationCodes).where(eq(schema.verificationCodes.id, verificationCode.id));
 			}
 

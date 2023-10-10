@@ -3,15 +3,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { sql } from "drizzle-orm";
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "~/components/ui/card";
-import DogworxLogoGradient from "~/assets/dogworx-logo-gradient.svg";
+import TKITLogo from "~/assets/tkit-logo.svg";
 import { drizzle } from "~/db/drizzle";
 import { organizationInviteLinks } from "~/db/schema/auth";
 import { server } from "~/lib/trpc/server";
 import { InviteForm } from "./_components/invite-form";
 
 export const metadata: Metadata = {
-	title: "Invalid Invite | Dogworx Management",
+	title: "Create your account | TKIT",
 };
 
 async function InvitePage({ params }: { params: { id: string } }) {
@@ -34,71 +33,68 @@ async function InvitePage({ params }: { params: { id: string } }) {
 		}
 
 		return (
-			<>
-				<div className="mb-8 flex w-full items-center justify-center">
-					<Image src={DogworxLogoGradient as string} alt="Dogworx Logo (Gradient Version)" width={237} height={60} />
-				</div>
-				<Card className="w-full sm:max-w-lg">
-					<CardHeader className="space-y-1 pb-4">
-						<CardTitle className="text-2xl">Invalid Invite</CardTitle>
-						<CardDescription>
-							This invite may have expired or is invalid. Please contact your organization owner for a new invite.
-						</CardDescription>
-					</CardHeader>
+			<div className="mx-auto flex w-full flex-col items-center justify-center space-y-6 sm:w-full sm:max-w-md">
+				<div className="flex flex-col space-y-2 text-center">
+					<Image
+						src={TKITLogo as string}
+						alt="Dogworx Logo (Gradient Version)"
+						width={40}
+						height={40}
+						className="mx-auto"
+					/>
 
-					<CardFooter className="grid gap-4">
-						<div className="text-sm text-muted-foreground">
-							Already have an account?{" "}
-							<Link
-								aria-label="Sign in"
-								href="/sign-in"
-								className="text-primary underline-offset-4 transition-colors hover:underline"
-							>
-								Sign in
-							</Link>
-						</div>
-					</CardFooter>
-				</Card>
-			</>
+					<h1 className="text-2xl font-semibold tracking-tight">Invalid invite</h1>
+					<p className="text-sm text-muted-foreground">
+						This invite may have expired or is invalid. Please contact your organization owner for a new invite.
+					</p>
+				</div>
+
+				<div className="mx-auto text-center text-sm text-muted-foreground">
+					Already have an account?{" "}
+					<Link
+						aria-label="Sign in"
+						href="/sign-in"
+						className="text-primary underline-offset-4 transition-colors hover:underline"
+					>
+						Sign in
+					</Link>
+				</div>
+			</div>
 		);
 	}
 
 	return (
-		<>
-			<div className="mb-8 flex w-full items-center justify-center">
-				<Image src={DogworxLogoGradient as string} alt="Dogworx Logo (Gradient Version)" width={237} height={60} />
+		<div className="mx-auto flex w-full flex-col items-center justify-center space-y-6 sm:w-full sm:max-w-md">
+			<div className="flex flex-col space-y-2 text-center">
+				<Image
+					src={TKITLogo as string}
+					alt="Dogworx Logo (Gradient Version)"
+					width={40}
+					height={40}
+					className="mx-auto"
+				/>
+
+				<h1 className="text-2xl font-semibold tracking-tight">Welcome to TKIT</h1>
+				<p className="text-sm text-muted-foreground">
+					Enter your details below to create your
+					<br />
+					<span className="font-semibold">{response.data.organization.name}</span> account
+				</p>
 			</div>
 
-			<Card className="w-full sm:max-w-lg">
-				<CardHeader className="space-y-1">
-					{/* <div className="mb-6  flex w-full items-center justify-center">
-						<DogworxLogoFull className="h-[60px] w-[237px]" />
-					</div> */}
-					<CardTitle className="text-2xl">Sign up</CardTitle>
-					<CardDescription>
-						Enter your details below to create your{" "}
-						<span className="font-semibold">{response.data.organization.name}</span> account
-					</CardDescription>
-				</CardHeader>
+			<InviteForm inviteLink={response.data} />
 
-				<CardContent className="grid gap-4 px-6 pb-4">
-					<InviteForm inviteLink={response.data} />
-				</CardContent>
-
-				<CardFooter className="grid gap-4">
-					<div className="text-sm text-muted-foreground">
-						Already have an account?{" "}
-						<Link
-							aria-label="Sign in"
-							href="/sign-in"
-							className="text-primary underline-offset-4 transition-colors hover:underline"
-						>
-							Sign in
-						</Link>
-					</div>
-				</CardFooter>
-			</Card>
-		</>
+			<div className="mx-auto text-center text-sm text-muted-foreground">
+				Already have an account?{" "}
+				<Link
+					aria-label="Sign in"
+					href="/sign-in"
+					className="text-primary underline-offset-4 transition-colors hover:underline"
+				>
+					Sign in
+				</Link>
+			</div>
+		</div>
 	);
 }
 

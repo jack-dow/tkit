@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import dynamic from "next/dynamic";
 import { useFormContext } from "react-hook-form";
 
 import {
@@ -14,8 +15,14 @@ import {
 	FormSheetGroup,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import { RichTextEditor } from "../ui/rich-text-editor";
 import { type ManageVetFormSchema } from "./use-manage-vet-form";
+
+const RichTextEditor = dynamic(() => import("../ui/rich-text-editor/rich-text-editor"), {
+	ssr: false,
+	loading: () => (
+		<div className="relative min-h-[150px] w-full rounded-md px-3 py-2 text-sm shadow-sm ring-1 ring-inset ring-input transition-colors focus-within:ring-inset focus-within:ring-ring" />
+	),
+});
 
 function VetContactInformation({ variant }: { variant: "sheet" | "form" }) {
 	const form = useFormContext<ManageVetFormSchema>();

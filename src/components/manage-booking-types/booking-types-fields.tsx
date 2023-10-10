@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import dynamic from "next/dynamic";
 import ms from "ms";
 import { useFormContext } from "react-hook-form";
 
@@ -8,12 +9,18 @@ import { cn, secondsToHumanReadable } from "~/lib/utils";
 import { Checkbox } from "../ui/checkbox";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
-import { RichTextEditor } from "../ui/rich-text-editor";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
 import { type ManageBookingTypeFormSchema } from "./use-manage-booking-types-form";
 
+const RichTextEditor = dynamic(() => import("../ui/rich-text-editor/rich-text-editor"), {
+	ssr: false,
+	loading: () => (
+		<div className="relative min-h-[150px] w-full rounded-md px-3 py-2 text-sm shadow-sm ring-1 ring-inset ring-input transition-colors focus-within:ring-inset focus-within:ring-ring" />
+	),
+});
+
 export const BOOKING_TYPES_COLORS = {
-	gray: "bg-slate-200",
+	gray: "bg-zinc-200",
 	red: "bg-red-200",
 	amber: "bg-amber-200",
 	yellow: "bg-yellow-200",
@@ -21,8 +28,8 @@ export const BOOKING_TYPES_COLORS = {
 	emerald: "bg-emerald-200",
 	teal: "bg-teal-200",
 	cyan: "bg-cyan-200",
-	sky: "bg-sky-200",
 	purple: "bg-purple-200",
+	violet: "bg-violet-200",
 	rose: "bg-rose-200",
 };
 

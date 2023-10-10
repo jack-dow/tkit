@@ -193,7 +193,7 @@ function VetToDogRelationships({
 				</div>
 
 				<div className="sm:col-span-6">
-					<ul role="list" className="divide-y divide-slate-100">
+					<ul role="list" className="divide-y divide-zinc-100">
 						{dogToVetRelationships.fields.map((dogToVetRelationship, index) => (
 							<VetToDogRelationship
 								key={dogToVetRelationship.id}
@@ -239,7 +239,7 @@ function VetToDogRelationship({
 			className={cn("flex items-center justify-between gap-x-6", index === 0 ? "pb-4" : "py-4")}
 		>
 			<div className="flex shrink items-center gap-x-2 truncate">
-				<div className="flex h-10 w-10 flex-none items-center justify-center rounded-full bg-slate-50">
+				<div className="flex h-10 w-10 flex-none items-center justify-center rounded-full bg-zinc-50">
 					<DogIcon className="h-5 w-5" />
 				</div>
 
@@ -247,7 +247,7 @@ function VetToDogRelationship({
 					<p className="truncate text-sm font-semibold capitalize leading-6 text-primary">
 						{dogToVetRelationship.dog.givenName} {dogToVetRelationship.dog.familyName}
 					</p>
-					<p className="truncate text-xs capitalize leading-5 text-slate-500">
+					<p className="truncate text-xs capitalize leading-5 text-zinc-500">
 						{dogToVetRelationship.dog.color} {dogToVetRelationship.dog.breed}
 					</p>
 				</div>
@@ -337,7 +337,7 @@ function VetToDogRelationship({
 
 				<div className="flex items-center">
 					<DropdownMenu>
-						<DropdownMenuTrigger className="flex items-center rounded-full text-slate-400 hover:text-slate-600  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+						<DropdownMenuTrigger className="flex items-center rounded-full text-zinc-400 hover:text-zinc-600  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
 							<span className="sr-only">Open options</span>
 							<EllipsisVerticalIcon className="h-5 w-5" />
 						</DropdownMenuTrigger>

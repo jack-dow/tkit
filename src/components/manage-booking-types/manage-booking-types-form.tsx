@@ -89,7 +89,11 @@ function ManageBookingTypeForm({ bookingType, onSubmit, onSuccessfulSubmit }: Us
 						<Separator orientation="vertical" className="h-4" />
 						{!isNew && (
 							<>
-								<BookingTypeDeleteDialog />
+								<BookingTypeDeleteDialog
+									onSuccessfulDelete={() => {
+										router.push("/settings/booking-types");
+									}}
+								/>
 								<Separator orientation="vertical" className="h-4" />
 							</>
 						)}

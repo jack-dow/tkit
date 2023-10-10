@@ -32,7 +32,7 @@ import {
 } from "~/db/validation/auth";
 import { env } from "~/env.mjs";
 import { PaginationOptionsSchema, validatePaginationSearchParams } from "~/lib/utils";
-import { createTRPCRouter, protectedProcedure } from "../../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../../trpc";
 import { ORGANIZATIONS_SORTABLE_COLUMNS } from "../sortable-columns";
 
 export const organizationsRouter = createTRPCRouter({
@@ -140,6 +140,7 @@ export const organizationsRouter = createTRPCRouter({
 								ipAddress: true,
 								userAgent: true,
 								lastActiveAt: true,
+								userId: true,
 							},
 						},
 					},
@@ -228,7 +229,7 @@ export const organizationsRouter = createTRPCRouter({
 	}),
 
 	inviteLinks: createTRPCRouter({
-		byId: protectedProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
+		byId: publicProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
 			const data = await ctx.db.query.organizationInviteLinks.findFirst({
 				where: sql`BINARY ${organizationInviteLinks.id} = ${input.id}`,
 				with: {

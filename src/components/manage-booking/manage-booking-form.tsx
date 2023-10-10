@@ -156,7 +156,11 @@ function ManageBookingForm({ booking, onSubmit, bookingTypes, onSuccessfulSubmit
 								)}
 							/>
 						) : (
-							<BookingDeleteDialog />
+							<BookingDeleteDialog
+								onSuccessfulDelete={() => {
+									router.push("/bookings");
+								}}
+							/>
 						)}
 
 						<Separator orientation="vertical" className="h-4" />

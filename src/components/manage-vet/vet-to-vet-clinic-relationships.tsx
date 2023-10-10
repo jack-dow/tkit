@@ -261,7 +261,7 @@ function VetToVetClinicRelationships({ isNew, variant }: { isNew: boolean; varia
 
 				{vetToVetClinicRelationships.fields.length > 0 && (
 					<div className="sm:col-span-6">
-						<ul role="list" className="divide-y divide-slate-100">
+						<ul role="list" className="divide-y divide-zinc-100">
 							{vetToVetClinicRelationships.fields.map((vetToVetClinicRelationship, index) => (
 								<VetToVetClinicRelationship
 									key={vetToVetClinicRelationship.id}
@@ -311,7 +311,7 @@ function VetToVetClinicRelationship({
 	return (
 		<li className={cn("flex items-center justify-between gap-x-6", index === 0 ? "pb-4" : "py-4")}>
 			<div className="flex shrink items-center gap-x-2 truncate">
-				<div className="hidden h-10 w-10 flex-none items-center justify-center rounded-full bg-slate-50 sm:flex">
+				<div className="hidden h-10 w-10 flex-none items-center justify-center rounded-full bg-zinc-50 sm:flex">
 					<UserCircleIcon className="h-5 w-5" />
 				</div>
 
@@ -441,7 +441,7 @@ function VetToVetClinicRelationship({
 
 				<div className="flex items-center">
 					<DropdownMenu>
-						<DropdownMenuTrigger className="flex items-center rounded-full text-slate-400 hover:text-slate-600  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+						<DropdownMenuTrigger className="flex items-center rounded-full text-zinc-400 hover:text-zinc-600  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
 							<span className="sr-only">Open options</span>
 							<EllipsisVerticalIcon className="h-5 w-5" />
 						</DropdownMenuTrigger>

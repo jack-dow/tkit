@@ -8,10 +8,10 @@ import { usePathname, useRouter } from "next/navigation";
 import { Button } from "~/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "~/components/ui/sheet";
 import { useSession } from "~/app/providers";
-import DogworxPawLogoGradient from "~/assets/dogworx-paw-logo-gradient.svg";
+import TKITLogo from "~/assets/tkit-logo.svg";
 import { api } from "~/lib/trpc/client";
 import { cn } from "~/lib/utils";
-import { navigation } from "./dark-desktop-sidebar";
+import { navigation } from "./desktop-sidebar";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -22,6 +22,7 @@ import {
 } from "./ui/dropdown-menu";
 import { LogOutIcon, MobileMenuIcon, UserIcon } from "./ui/icons";
 import { Loader } from "./ui/loader";
+import { Separator } from "./ui/separator";
 import { useToast } from "./ui/use-toast";
 
 function MobileNavigation() {
@@ -48,7 +49,7 @@ function MobileNavigation() {
 					shallow
 					className="rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
 				>
-					<Image src={DogworxPawLogoGradient as string} alt="Dogworx Paw Logo (Gradient Version)" />
+					<Image src={TKITLogo as string} alt="Dogworx Paw Logo (Gradient Version)" width={40} height={40} />
 				</Link>
 				<SheetHeader>
 					<SheetTitle className="sr-only">Mobile Navigation</SheetTitle>
@@ -73,16 +74,24 @@ function MobileNavigation() {
 
 									return (
 										<React.Fragment key={item.name}>
-											<li>
-												<a
+											<li className="group relative">
+												<div className="absolute -left-4 h-full py-2">
+													<Separator
+														className={cn(
+															"h-full w-[2px] pl-[2px] transition duration-75",
+															current ? "bg-black" : !item.disabled ? "bg-white group-hover:bg-black" : "",
+														)}
+													/>
+												</div>
+												<Link
 													aria-disabled={item.disabled}
 													href={item.disabled ? "#" : item.href}
 													className={cn(
 														current
-															? "bg-slate-50 text-indigo-600"
+															? "text-zinc-950"
 															: !item.disabled
-															? "text-slate-700 hover:text-indigo-600 hover:bg-slate-50"
-															: "opacity-25 cursor-not-allowed text-slate-700 hover:bg-transparent hover:text-slate-700",
+															? "text-zinc-700 hover:text-zinc-950"
+															: "opacity-25 cursor-not-allowed text-zinc-700",
 														"group flex gap-x-4 rounded-md p-2 font-medium text-base leading-6 items-center",
 														"focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
 													)}
@@ -90,17 +99,17 @@ function MobileNavigation() {
 													<item.icon
 														className={cn(
 															current
-																? "text-indigo-600"
+																? "text-zinc-950"
 																: !item.disabled
-																? "text-slate-400 group-hover:text-indigo-600"
-																: "cursor-not-allowed text-slate-700 hover:text-slate-700",
+																? "text-zinc-500 group-hover:text-zinc-950"
+																: "cursor-not-allowed text-zinc-500",
 
 															"h-5 w-5 shrink-0",
 														)}
 														aria-hidden="true"
 													/>
 													{item.name}
-												</a>
+												</Link>
 											</li>
 											{current && item.subNavigation && (
 												<ul role="list" className="flex flex-1 flex-col gap-y-2">
@@ -114,7 +123,7 @@ function MobileNavigation() {
 																<div className={cn("relative flex justify-between")}>
 																	{!isLast ? (
 																		<span
-																			className="absolute left-[18px] top-6 -ml-px h-full w-0.5 bg-slate-200"
+																			className="absolute left-[18px] top-6 -ml-px h-full w-0.5 bg-zinc-200"
 																			aria-hidden="true"
 																		/>
 																	) : null}
@@ -123,17 +132,17 @@ function MobileNavigation() {
 																		href={subItem.href}
 																		className={cn(
 																			current
-																				? "bg-slate-50 text-indigo-600"
-																				: "text-slate-500 hover:text-indigo-600 hover:bg-slate-50",
-																			"relative w-full group flex gap-x-3 rounded-md p-2 font-normal text-base leading-6 items-center",
+																				? "bg-zinc-50 text-zinc-950 shadow-sm"
+																				: "text-zinc-700 hover:text-zinc-950 hover:bg-zinc-50 hover:shadow-sm",
+																			"relative w-full group flex gap-x-3 rounded-md p-2 font-normal text-base leading-6 items-center transition-colors duration-75",
 																		)}
 																	>
 																		<div className="flex h-5 w-5 shrink-0 items-center justify-center">
-																			<div className="flex h-2 w-2 items-center justify-center rounded-full border border-input bg-white shadow">
+																			<div className="flex h-2 w-2 items-center justify-center rounded-full border border-zinc-200 bg-white shadow">
 																				<div
 																					className={cn(
-																						"h-1 w-1 rounded-full transition-colors",
-																						current ? "bg-primary" : "bg-muted group-hover:bg-indigo-600",
+																						"h-1 w-1 rounded-full transition-colors duration-75",
+																						current ? "bg-zinc-950" : "bg-zinc-200 group-hover:bg-zinc-950",
 																					)}
 																				/>
 																			</div>
@@ -170,7 +179,7 @@ function MobileNavigation() {
 												/>
 											</div>
 										) : (
-											<div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-slate-100 ">
+											<div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-zinc-100 ">
 												{session.user.givenName[0]}
 												{session.user.familyName?.[0]}
 											</div>

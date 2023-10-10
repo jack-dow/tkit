@@ -209,7 +209,7 @@ function OrganizationUserItem({
 	return (
 		<li className="relative flex justify-between gap-x-6 py-5">
 			<div className="flex shrink items-center gap-x-2 truncate">
-				<div className="hidden h-12 w-12 flex-none items-center justify-center rounded-full bg-slate-50 sm:flex">
+				<div className="hidden h-12 w-12 flex-none items-center justify-center rounded-full bg-zinc-50 sm:flex">
 					{organizationUser.profileImageUrl ? (
 						<Image
 							src={organizationUser.profileImageUrl}
@@ -280,7 +280,7 @@ function OrganizationUserItem({
 				</div>
 				{organizationUser.id !== user.id && user.organizationRole !== "member" && (
 					<DropdownMenu>
-						<DropdownMenuTrigger className="flex items-center rounded-full text-slate-400 hover:text-slate-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
+						<DropdownMenuTrigger className="flex items-center rounded-full text-zinc-400 hover:text-zinc-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
 							<span className="sr-only">Open options</span>
 							<EllipsisVerticalIcon className="h-5 w-5" />
 						</DropdownMenuTrigger>

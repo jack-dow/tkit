@@ -33,7 +33,7 @@ const useIsFocused = (inputRef: React.RefObject<HTMLInputElement>) => {
 };
 
 const segmentVariants = cva(
-	'flex h-full appearance-none rounded-md border-2 border-slate-300 bg-white [--segment-color:#94a3b8] data-[state="error"]:[--segment-color:#ef4444] data-[state="success"]:[--segment-color:#10b981]',
+	'flex h-full appearance-none rounded-md border-2 border-zinc-300 bg-white [--segment-color:#94a3b8] data-[state="error"]:[--segment-color:#ef4444] data-[state="success"]:[--segment-color:#10b981]',
 	{
 		variants: {
 			state: {

@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useFormContext } from "react-hook-form";
 
@@ -19,9 +20,15 @@ import {
 import { Input } from "~/components/ui/input";
 import { useUser } from "~/app/providers";
 import { env } from "~/env.mjs";
-import { RichTextEditor } from "../ui/rich-text-editor";
 import { TimezoneSelect } from "../ui/timezone-select";
 import { type ManageOrganizationFormSchema } from "./manage-organization-form";
+
+const RichTextEditor = dynamic(() => import("../ui/rich-text-editor/rich-text-editor"), {
+	ssr: false,
+	loading: () => (
+		<div className="relative min-h-[150px] w-full rounded-md px-3 py-2 text-sm shadow-sm ring-1 ring-inset ring-input transition-colors focus-within:ring-inset focus-within:ring-ring" />
+	),
+});
 
 function OrganizationGeneralSettings() {
 	const form = useFormContext<ManageOrganizationFormSchema>();

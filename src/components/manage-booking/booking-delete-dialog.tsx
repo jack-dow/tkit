@@ -28,6 +28,7 @@ function BookingDeleteDialog({ onSuccessfulDelete }: { onSuccessfulDelete?: () =
 						id: form.getValues("id"),
 						sendCancellationEmail: form.getValues("sendEmailUpdates"),
 					});
+
 					toast({
 						title: `Booking deleted`,
 						description: `Successfully deleted booking.`,

@@ -4,6 +4,7 @@
 	"private": true,
 	"scripts": {
 		"build": "next build",
+		"build:analyze": "ANALYZE=true next build",
 		"clean": "rm -rf .next node_modules/ .react-email",
 		"db:generate": "pnpm drizzle-kit generate:mysql --config=./drizzle.config.ts",
 		"db:push": "pnpm with-env drizzle-kit push:mysql --config=./drizzle.config.ts",
@@ -20,6 +21,9 @@
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.425.0",
 		"@aws-sdk/s3-request-presigner": "^3.425.0",
+		"@dnd-kit/core": "^6.0.8",
+		"@dnd-kit/modifiers": "^6.0.1",
+		"@dnd-kit/utilities": "^3.2.1",
 		"@heroicons/react": "^2.0.18",
 		"@hookform/resolvers": "^3.3.1",
 		"@internationalized/date": "^3.5.0",
@@ -93,7 +97,6 @@
 		"react-email": "1.9.5",
 		"react-hook-form": "^7.47.0",
 		"react-timezone-select": "^2.1.2",
-		"react-window": "^1.8.9",
 		"resend": "^1.1.0",
 		"sanitize-html": "^2.11.0",
 		"sharp": "^0.32.6",
@@ -114,7 +117,6 @@
 		"@types/node": "^20.8.2",
 		"@types/react": "^18.2.25",
 		"@types/react-dom": "^18.2.10",
-		"@types/react-window": "^1.8.6",
 		"@types/sanitize-html": "^2.9.1",
 		"@types/ua-parser-js": "^0.7.37",
 		"@typescript-eslint/eslint-plugin": "^6.7.4",

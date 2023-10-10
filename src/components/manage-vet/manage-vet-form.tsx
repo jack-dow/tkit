@@ -74,7 +74,11 @@ function ManageVetForm({ vet, onSubmit, onSuccessfulSubmit }: UseManageVetFormPr
 					<div className="flex items-center justify-end space-x-3">
 						{!isNew && (
 							<>
-								<VetDeleteDialog />
+								<VetDeleteDialog
+									onSuccessfulDelete={() => {
+										router.push("/vets");
+									}}
+								/>
 
 								<Separator orientation="vertical" className="h-4" />
 							</>

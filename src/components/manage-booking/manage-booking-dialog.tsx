@@ -236,7 +236,11 @@ function ManageBookingDialogForm({
 								)}
 							/>
 						) : (
-							<BookingDeleteDialog />
+							<BookingDeleteDialog
+								onSuccessfulDelete={() => {
+									setOpen(false);
+								}}
+							/>
 						)}
 
 						<Separator orientation="vertical" className="h-4" />
@@ -270,3 +274,4 @@ function ManageBookingDialogForm({
 }
 
 export { type ManageBookingDialogProps, ManageBookingDialog };
+export default ManageBookingDialog;

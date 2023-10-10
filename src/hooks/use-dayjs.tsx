@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import duration from "dayjs/plugin/duration";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import isToday from "dayjs/plugin/isToday";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -23,6 +24,7 @@ dayjs.updateLocale("en", {
 	weekStart: 1,
 });
 dayjs.extend(isSameOrBefore);
+dayjs.extend(isSameOrAfter);
 
 export const useDayjs = () => {
 	const user = useUser();

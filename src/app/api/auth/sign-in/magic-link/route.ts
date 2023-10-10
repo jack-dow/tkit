@@ -34,7 +34,7 @@ async function GET(request: NextRequest) {
 			});
 		}
 
-		if (magicLink?.user?.emailAddress.toLowerCase() !== "test@dogworx.com.au") {
+		if (magicLink?.user?.emailAddress.toLowerCase() !== "test@tkit.app") {
 			await drizzle.delete(verificationCodes).where(eq(verificationCodes.id, magicLink.id));
 		}
 

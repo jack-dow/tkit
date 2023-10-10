@@ -69,7 +69,11 @@ function ManageVetClinicForm({ vetClinic, onSubmit, onSuccessfulSubmit }: UseMan
 					<div className="flex items-center justify-end space-x-3">
 						{!isNew && (
 							<>
-								<VetClinicDeleteDialog />
+								<VetClinicDeleteDialog
+									onSuccessfulDelete={() => {
+										router.push("/vet-clinics");
+									}}
+								/>
 								<Separator orientation="vertical" className="h-4" />
 							</>
 						)}
