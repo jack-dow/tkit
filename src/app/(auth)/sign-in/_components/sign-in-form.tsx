@@ -91,7 +91,7 @@ function SignInForm() {
 
 	return (
 		<Form {...form}>
-			<form className="grid gap-2" onSubmit={(...args) => void form.handleSubmit(onSubmit)(...args)}>
+			<form className="grid gap-4" onSubmit={(...args) => void form.handleSubmit(onSubmit)(...args)}>
 				<FormField
 					control={form.control}
 					name="emailAddress"

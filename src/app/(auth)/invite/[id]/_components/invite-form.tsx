@@ -147,7 +147,7 @@ function InviteForm({
 
 					<Button type="submit" disabled={form.formState.isSubmitting} className="col-span-2">
 						{form.formState.isSubmitting && <Loader size="sm" aria-hidden="true" />}
-						Continue
+						Create your account
 						<span className="sr-only">Continue to email verification page</span>
 					</Button>
 				</form>

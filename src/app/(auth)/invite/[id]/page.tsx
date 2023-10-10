@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { sql } from "drizzle-orm";
 
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import TKITLogo from "~/assets/tkit-logo.svg";
 import { drizzle } from "~/db/drizzle";
 import { organizationInviteLinks } from "~/db/schema/auth";
@@ -33,23 +34,58 @@ async function InvitePage({ params }: { params: { id: string } }) {
 		}
 
 		return (
-			<div className="mx-auto flex w-full flex-col items-center justify-center space-y-6 sm:w-full sm:max-w-md">
-				<div className="flex flex-col space-y-2 text-center">
+			<Card className="w-full text-center sm:max-w-lg">
+				<CardHeader className="space-y-1 pb-4">
 					<Image
 						src={TKITLogo as string}
 						alt="Dogworx Logo (Gradient Version)"
 						width={40}
 						height={40}
-						className="mx-auto"
+						className="mx-auto pb-2"
 					/>
+					<CardTitle className="text-2xl">Invalid invite</CardTitle>
+					<CardDescription>
+						This invite has expired or is invalid. Please contact your organization owner for a new invite.
+					</CardDescription>
+				</CardHeader>
 
-					<h1 className="text-2xl font-semibold tracking-tight">Invalid invite</h1>
-					<p className="text-sm text-muted-foreground">
-						This invite may have expired or is invalid. Please contact your organization owner for a new invite.
-					</p>
-				</div>
+				<CardContent className="grid gap-4">
+					<div className="text-sm text-muted-foreground">
+						Already have an account?{" "}
+						<Link
+							aria-label="Sign in"
+							href="/sign-in"
+							className="text-primary underline-offset-4 transition-colors hover:underline"
+						>
+							Sign in
+						</Link>
+					</div>
+				</CardContent>
+			</Card>
+		);
+	}
 
-				<div className="mx-auto text-center text-sm text-muted-foreground">
+	return (
+		<Card className="w-full sm:max-w-lg">
+			<CardHeader className="space-y-1 pb-4 text-center">
+				<Image
+					src={TKITLogo as string}
+					alt="Dogworx Logo (Gradient Version)"
+					width={40}
+					height={40}
+					className="mx-auto pb-2"
+				/>
+				<CardTitle className=" text-2xl">Welcome to TKIT</CardTitle>
+				<CardDescription>
+					Enter your details below to create your{" "}
+					<span className="font-semibold">{response.data.organization.name}</span> account
+				</CardDescription>
+			</CardHeader>
+
+			<CardContent className="grid gap-4">
+				<InviteForm inviteLink={response.data} />
+
+				<div className="text-sm text-muted-foreground">
 					Already have an account?{" "}
 					<Link
 						aria-label="Sign in"
@@ -59,42 +95,8 @@ async function InvitePage({ params }: { params: { id: string } }) {
 						Sign in
 					</Link>
 				</div>
-			</div>
-		);
-	}
-
-	return (
-		<div className="mx-auto flex w-full flex-col items-center justify-center space-y-6 sm:w-full sm:max-w-md">
-			<div className="flex flex-col space-y-2 text-center">
-				<Image
-					src={TKITLogo as string}
-					alt="Dogworx Logo (Gradient Version)"
-					width={40}
-					height={40}
-					className="mx-auto"
-				/>
-
-				<h1 className="text-2xl font-semibold tracking-tight">Welcome to TKIT</h1>
-				<p className="text-sm text-muted-foreground">
-					Enter your details below to create your
-					<br />
-					<span className="font-semibold">{response.data.organization.name}</span> account
-				</p>
-			</div>
-
-			<InviteForm inviteLink={response.data} />
-
-			<div className="mx-auto text-center text-sm text-muted-foreground">
-				Already have an account?{" "}
-				<Link
-					aria-label="Sign in"
-					href="/sign-in"
-					className="text-primary underline-offset-4 transition-colors hover:underline"
-				>
-					Sign in
-				</Link>
-			</div>
-		</div>
+			</CardContent>
+		</Card>
 	);
 }
 
