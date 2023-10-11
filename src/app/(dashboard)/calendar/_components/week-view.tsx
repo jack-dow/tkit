@@ -42,7 +42,7 @@ function areBookingsOverlapping(dayjs: Dayjs, booking1: Booking, booking2: Booki
 	const start1 = dayjs.tz(booking1.date);
 	const end1 = start1.add(booking1.duration, "second");
 
-	const start2 = dayjs.tz(booking2.date);
+	const start2 = dayjs.tz(booking2.date).add(1, "second");
 	const end2 = start2.add(booking2.duration, "second");
 
 	// Check if either range is entirely before or after the other
