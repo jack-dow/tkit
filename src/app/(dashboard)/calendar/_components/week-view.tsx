@@ -45,13 +45,13 @@ function areBookingsOverlapping(dayjs: Dayjs, booking1: Booking, booking2: Booki
 	const start2 = dayjs.tz(booking2.date).add(1, "second");
 	const end2 = start2.add(booking2.duration, "second");
 
-	// Check if either range is entirely before or after the other
-	if (end1.isBefore(start2) || end2.isBefore(start1)) {
-		return false;
+	// end_date2 >= start_date1 and end_date1 > start_date2 - SEE: https://blog.widefix.com/date-ranges-overlap/
+	// Don't wnt to check end_date 1 >= start_date2 as that wouldn't allow bookings to be back to back
+	if (end2.isSameOrAfter(start1) && end1.isAfter(start2)) {
+		return true;
 	}
 
-	// If the above condition is not met, the ranges overlap
-	return true;
+	return false;
 }
 
 function groupOverlappingBookings(dayjs: Dayjs, bookings: Booking[]) {
