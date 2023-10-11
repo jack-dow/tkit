@@ -13,10 +13,10 @@ import { CalendarIcon, ChevronUpDownIcon } from "~/components/ui/icons";
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
 import { useToast } from "~/components/ui/use-toast";
 import { useDayjs } from "~/hooks/use-dayjs";
+import { BOOKINGS_SORTABLE_COLUMNS } from "~/lib/sortable-columns";
 import { api } from "~/lib/trpc/client";
 import { cn, logInDevelopment, PaginationOptionsSchema, searchParamsToObject } from "~/lib/utils";
 import { type RouterOutputs } from "~/server";
-import { BOOKINGS_SORTABLE_COLUMNS } from "~/server/router/sortable-columns";
 import { createBookingsTableColumns } from "./bookings-table-columns";
 
 function BookingsTable({ initialData }: { initialData: RouterOutputs["app"]["bookings"]["all"] }) {

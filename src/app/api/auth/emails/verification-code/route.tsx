@@ -2,7 +2,6 @@ import { env } from "process";
 import { NextResponse, type NextRequest } from "next/server";
 import cryptoRandomString from "crypto-random-string";
 import { VerificationCodeEmail } from "emails/verification-code-email";
-import ms from "ms";
 import { Resend } from "resend";
 import { z } from "zod";
 
@@ -61,7 +60,7 @@ async function POST(request: NextRequest): Promise<NextResponse<SendVerification
 			id: generateId(),
 			emailAddress: emailAddress,
 			code,
-			expiresAt: new Date(Date.now() + ms("5m")),
+			expiresAt: new Date(Date.now() + 300000),
 		});
 
 		await resend.sendEmail({

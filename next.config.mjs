@@ -19,5 +19,13 @@ const config = {
 			"dogworx-management.s3.ap-southeast-2.amazonaws.com",
 		],
 	},
+	// SEE: https://github.com/aws/aws-sdk-js-v3/issues/5216
+	webpack: (config) => {
+		config.externals.push({
+			"@aws-sdk/signature-v4-multi-region": "commonjs @aws-sdk/signature-v4-multi-region",
+		});
+
+		return config;
+	},
 };
 export default withBundleAnalyzer(config);

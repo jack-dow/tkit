@@ -2,10 +2,9 @@
 
 import * as React from "react";
 import dynamic from "next/dynamic";
-import ms from "ms";
 import { useFormContext } from "react-hook-form";
 
-import { cn, secondsToHumanReadable } from "~/lib/utils";
+import { cn, parseDurationToSeconds, secondsToHumanReadable } from "~/lib/utils";
 import { Checkbox } from "../ui/checkbox";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
@@ -53,7 +52,7 @@ function BookingTypeFields({}: { variant: "dialog" | "form" }) {
 	const form = useFormContext<ManageBookingTypeFormSchema>();
 
 	const [durationInputValue, setDurationInputValue] = React.useState(
-		form.getValues("duration") ? ms(form.getValues("duration") * 1000, { long: true }) : "",
+		form.getValues("duration") ? secondsToHumanReadable(form.getValues("duration")) : "",
 	);
 
 	return (
@@ -137,7 +136,7 @@ function BookingTypeFields({}: { variant: "dialog" | "form" }) {
 											field.onChange(value * 60, { shouldValidate: true });
 										} else {
 											// Otherwise see if it is a valid time
-											let parsed = ms(value);
+											let parsed = parseDurationToSeconds(value);
 
 											if (parsed > 86400000) {
 												parsed = 86400000;

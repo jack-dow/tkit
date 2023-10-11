@@ -6,21 +6,15 @@ import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { and, eq, sql } from "drizzle-orm";
-import ms from "ms";
 import { z } from "zod";
 
 import { schema } from "~/db/drizzle";
 import { organizationInviteLinks, organizations, sessions, users } from "~/db/schema/auth";
 import { UpdateUserSchema, type InsertUserSchema } from "~/db/validation/auth";
 import { env } from "~/env.mjs";
-import {
-	createSessionJWT,
-	generateId,
-	sessionCookieOptions,
-	sessionJWTExpiry,
-	SignUpSchema,
-	type SessionCookie,
-} from "~/lib/utils";
+import { createSessionJWT } from "~/lib/jwt";
+import { sessionCookieOptions, sessionJWTExpiry, type SessionCookie } from "~/lib/session-cookie-options";
+import { generateId, SignUpSchema } from "~/lib/utils";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../../trpc";
 
 dayjs.extend(utc);
@@ -136,7 +130,7 @@ export const userRouter = createTRPCRouter({
 			name: "__timezone-dialog",
 			value: "1",
 			httpOnly: true,
-			maxAge: ms("30d"),
+			maxAge: 2592000000,
 			path: "/",
 		});
 	}),

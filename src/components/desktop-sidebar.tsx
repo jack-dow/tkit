@@ -132,6 +132,7 @@ function DarkDesktopSidebar() {
 														)}
 													/>
 												</div>
+
 												<Link
 													aria-disabled={item.disabled}
 													href={item.disabled ? "#" : item.href}

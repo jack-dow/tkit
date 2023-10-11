@@ -31,7 +31,8 @@ import {
 	UpdateUserSchema,
 } from "~/db/validation/auth";
 import { env } from "~/env.mjs";
-import { PaginationOptionsSchema, validatePaginationSearchParams } from "~/lib/utils";
+import { PaginationOptionsSchema } from "~/lib/utils";
+import { validatePaginationSearchParams } from "~/server/utils";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../../trpc";
 import { ORGANIZATIONS_SORTABLE_COLUMNS } from "../sortable-columns";
 

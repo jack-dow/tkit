@@ -3,7 +3,8 @@ import { z } from "zod";
 
 import { bookingTypes } from "~/db/schema/app";
 import { InsertBookingTypeSchema, UpdateBookingTypeSchema } from "~/db/validation/app";
-import { PaginationOptionsSchema, validatePaginationSearchParams } from "~/lib/utils";
+import { PaginationOptionsSchema } from "~/lib/utils";
+import { validatePaginationSearchParams } from "~/server/utils";
 import { createTRPCRouter, protectedProcedure } from "../../trpc";
 import { BOOKING_TYPES_SORTABLE_COLUMNS } from "../sortable-columns";
 

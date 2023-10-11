@@ -2,7 +2,6 @@ import { env } from "process";
 import { NextResponse, type NextRequest } from "next/server";
 import cryptoRandomString from "crypto-random-string";
 import { MagicLinkEmail } from "emails/magic-link-email";
-import ms from "ms";
 import { Resend } from "resend";
 import { z } from "zod";
 
@@ -68,7 +67,7 @@ async function POST(request: NextRequest): Promise<NextResponse<SendMagicLinkPOS
 			emailAddress: user.emailAddress,
 			code,
 			token,
-			expiresAt: new Date(Date.now() + ms("5m")),
+			expiresAt: new Date(Date.now() + 300000),
 		});
 
 		await resend.emails.send({

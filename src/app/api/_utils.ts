@@ -1,7 +1,8 @@
 import { cookies } from "next/headers";
 import { type z } from "zod";
 
-import { jwt, sessionCookieOptions, sessionJWTExpiry, type SessionCookie } from "~/lib/utils";
+import { jwt } from "~/lib/jwt";
+import { sessionCookieOptions, sessionJWTExpiry, type SessionCookie } from "~/lib/session-cookie-options";
 
 export async function verifyAPISession() {
 	const cookieStore = cookies();

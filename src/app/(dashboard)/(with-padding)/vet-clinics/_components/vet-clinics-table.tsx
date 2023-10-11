@@ -6,10 +6,10 @@ import { useSearchParams } from "next/navigation";
 import { DataTable } from "~/components/ui/data-table";
 import { DestructiveActionDialog } from "~/components/ui/destructive-action-dialog";
 import { useToast } from "~/components/ui/use-toast";
+import { VET_CLINICS_SORTABLE_COLUMNS } from "~/lib/sortable-columns";
 import { api } from "~/lib/trpc/client";
 import { logInDevelopment, PaginationOptionsSchema, searchParamsToObject } from "~/lib/utils";
 import { type RouterOutputs } from "~/server";
-import { VET_CLINICS_SORTABLE_COLUMNS } from "~/server/router/sortable-columns";
 import { createVetClinicsTableColumns } from "./vet-clinics-table-columns";
 
 function VetClinicsTable({ initialData }: { initialData: RouterOutputs["app"]["vetClinics"]["all"] }) {

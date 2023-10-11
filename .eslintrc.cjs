@@ -28,24 +28,6 @@ const config = {
 			},
 		],
 		"@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
-		"no-restricted-imports": [
-			"error",
-			{
-				name: "@heroicons/react/20/solid",
-				message:
-					"Icons should be imported from '~/components/ui/icons' instead of '@heroicons/react to ensure consistent styling'",
-			},
-			{
-				name: "@heroicons/react/24/solid",
-				message:
-					"Icons should be imported from '~/components/ui/icons' instead of '@heroicons/react to ensure consistent styling'",
-			},
-			{
-				name: "@heroicons/react/20/outline",
-				message:
-					"Icons should be imported from '~/components/ui/icons' instead of '@heroicons/react to ensure consistent styling'",
-			},
-		],
 		"@typescript-eslint/no-misused-promises": [
 			"error",
 			{

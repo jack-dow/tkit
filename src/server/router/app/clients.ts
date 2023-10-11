@@ -3,7 +3,8 @@ import { z } from "zod";
 
 import { clients, dogs, dogToClientRelationships as dogToClientRelationshipsTable } from "~/db/schema/app";
 import { InsertClientSchema, UpdateClientSchema } from "~/db/validation/app";
-import { PaginationOptionsSchema, validatePaginationSearchParams } from "~/lib/utils";
+import { PaginationOptionsSchema } from "~/lib/utils";
+import { validatePaginationSearchParams } from "~/server/utils";
 import { createTRPCRouter, protectedProcedure } from "../../trpc";
 import { CLIENTS_SORTABLE_COLUMNS } from "../sortable-columns";
 import { dogsRouter, updateDogsFamilyName } from "./dogs";

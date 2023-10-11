@@ -11,8 +11,8 @@ import { httpBatchLink, loggerLink, splitLink, unstable_httpBatchStreamLink } fr
 import superjson from "superjson";
 
 import { env } from "~/env.mjs";
+import { type SessionCookie } from "~/lib/session-cookie-options";
 import { api } from "~/lib/trpc/client";
-import { type SessionCookie } from "~/lib/utils";
 
 type ProviderProps<Props = undefined> = Props extends undefined
 	? {

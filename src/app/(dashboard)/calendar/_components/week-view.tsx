@@ -1,12 +1,12 @@
 "use client";
 
 import * as React from "react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { type BOOKING_TYPES_COLORS } from "~/components/manage-booking-types/booking-types-fields";
-import { ManageBookingDialog } from "~/components/manage-booking/manage-booking-dialog";
 import { Button } from "~/components/ui/button";
 import { Calendar } from "~/components/ui/calendar";
 import {
@@ -15,7 +15,7 @@ import {
 	ChevronRightIcon,
 	DogIcon,
 	EditIcon,
-	FunnelIcon,
+	FunnelOutlineIcon,
 } from "~/components/ui/icons";
 import { Label } from "~/components/ui/label";
 import { Loader } from "~/components/ui/loader";
@@ -29,6 +29,11 @@ import { useDidUpdate } from "~/hooks/use-did-update";
 import { api } from "~/lib/trpc/client";
 import { cn, secondsToHumanReadable } from "~/lib/utils";
 import { type RouterOutputs } from "~/server";
+
+const DynamicManageBookingDialog = dynamic(
+	() => import("../../../../components/manage-booking/manage-booking-dialog"),
+	{ ssr: false },
+);
 
 type BookingsByWeek = RouterOutputs["app"]["bookings"]["byWeek"]["data"];
 type Booking = BookingsByWeek[number];
@@ -315,7 +320,7 @@ function WeekView({
 								)}
 							</span>
 							<span className="md:hidden">
-								<FunnelIcon className="h-4 w-4" />
+								<FunnelOutlineIcon className="h-4 w-4" />
 							</span>
 						</SelectTrigger>
 						<SelectContent className="pointer-events-none w-44" align="start">
@@ -481,7 +486,7 @@ function WeekView({
 								<div className="col-start-8 row-span-full w-8" />
 							</div>
 
-							<ManageBookingDialog
+							<DynamicManageBookingDialog
 								withoutTrigger
 								open={isManageBookingDialogOpen}
 								setOpen={(value) => {

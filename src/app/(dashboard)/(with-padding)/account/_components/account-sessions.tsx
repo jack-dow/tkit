@@ -17,8 +17,8 @@ import { Loader } from "~/components/ui/loader";
 import { useToast } from "~/components/ui/use-toast";
 import { useSession } from "~/app/providers";
 import { useDayjs } from "~/hooks/use-dayjs";
+import { sessionJWTExpiry } from "~/lib/session-cookie-options";
 import { api, type RouterOutputs } from "~/lib/trpc/client";
-import { sessionJWTExpiry } from "~/lib/utils";
 
 type Sessions = RouterOutputs["auth"]["user"]["sessions"]["all"]["data"];
 

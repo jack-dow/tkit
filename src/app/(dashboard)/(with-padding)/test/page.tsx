@@ -16,9 +16,10 @@ function TestPage() {
 	return (
 		<>
 			<PageHeader title="Test Page" back={{ href: "/" }} />
-			<div className="flex flex-col space-y-4 ">
-				<div className="flex shrink-0 gap-4 pb-3 pt-6">{process.env.NODE_ENV === "development" && <Test />}</div>
-			</div>
+			{process.env.NODE_ENV === "development" && <Test />}
+			{/* <div className="flex flex-col space-y-4 ">
+				<div className="flex shrink-0 gap-4 pb-3 pt-6"></div>
+			</div> */}
 		</>
 	);
 }

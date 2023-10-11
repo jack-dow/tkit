@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
+import { sessionCookieOptions } from "./lib/session-cookie-options";
 import { server } from "./lib/trpc/server";
-import { sessionCookieOptions } from "./lib/utils";
 
 export async function middleware(request: NextRequest) {
 	const pathname = request.nextUrl.pathname;

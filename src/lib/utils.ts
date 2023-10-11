@@ -1,14 +1,9 @@
 import { type MutableRefObject, type RefCallback } from "react";
-import { type ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { createId } from "@paralleldrive/cuid2";
 import { clsx, type ClassValue } from "clsx";
-import { asc, desc, type AnyColumn, type InferSelectModel } from "drizzle-orm";
-import { jwtVerify, SignJWT } from "jose";
-import ms from "ms";
 import { twMerge } from "tailwind-merge";
 import { z } from "zod";
 
-import { type users } from "~/db/schema/auth";
 import { env } from "../env.mjs";
 
 // ------------------------------------------------------------------
@@ -55,6 +50,28 @@ export function secondsToHumanReadable(seconds: number, options?: { nonPlural?: 
 	return formattedTime.join(", ");
 }
 
+export function parseDurationToSeconds(str: string) {
+	let total = 0;
+	const days = str.match(/(\d+)\s*d/);
+	const hours = str.match(/(\d+)\s*h/);
+	const minutes = str.match(/(\d+)\s*m/);
+	const seconds = str.match(/(\d+)\s*s/);
+	if (days?.[1]) {
+		total += parseInt(days[1]) * 86400;
+	}
+	if (hours?.[1]) {
+		total += parseInt(hours[1]) * 3600;
+	}
+	if (minutes?.[1]) {
+		total += parseInt(minutes[1]) * 60;
+	}
+	if (seconds?.[1]) {
+		total += parseInt(seconds[1]);
+	}
+
+	return total;
+}
+
 export function logInDevelopment(...args: unknown[]) {
 	if (process.env.NODE_ENV === "development") {
 		console.log(...args);
@@ -62,65 +79,6 @@ export function logInDevelopment(...args: unknown[]) {
 }
 
 export type SearchParams = { [key: string]: string | string[] | undefined };
-
-// ------------------------------------------------------------------
-// JWTs
-// ------------------------------------------------------------------
-async function sign<Token extends Record<string, unknown>>(payload: Token) {
-	const iat = Math.floor(Date.now() / 1000);
-
-	// Didn't include exp here because jose throws error if exp is passed and we want to be able to access the payload of expired jwt's in middleware
-	return new SignJWT(payload)
-		.setProtectedHeader({ alg: "HS256", typ: "JWT" })
-		.setIssuedAt(iat)
-		.setNotBefore(iat)
-		.sign(new TextEncoder().encode(env.JWT_SECRET));
-}
-
-async function verify(token: string) {
-	return jwtVerify(token, new TextEncoder().encode(env.JWT_SECRET))
-		.then((result) => {
-			return result.payload;
-		})
-		.catch(() => {
-			return null;
-		});
-}
-
-export const jwt = {
-	sign,
-	verify,
-};
-
-// ------------------------------------------------------------------
-// Auth Cookies
-// ------------------------------------------------------------------
-export const sessionCookieOptions = {
-	name: "__session",
-	httpOnly: true,
-	maxAge: ms("30d"),
-	path: "/",
-	sameSite: "lax",
-	secure: process.env.NODE_ENV === "production",
-} satisfies Partial<ResponseCookie>;
-
-export type SessionCookiePayload = {
-	id: string;
-	user: InferSelectModel<typeof users>;
-};
-
-export type SessionCookie = SessionCookiePayload & {
-	iat: number;
-	nbf: number;
-};
-
-export const sessionJWTExpiry = 60; // 1 minute
-
-export async function createSessionJWT(payload: SessionCookiePayload) {
-	const accessToken = await jwt.sign(payload);
-
-	return accessToken;
-}
 
 // ------------------------------------------------------------------
 // Auth Zod Validation
@@ -230,17 +188,6 @@ export const EmailOrPhoneNumberSchema = z
 export type EmailOrPhoneNumberSchema = z.infer<typeof EmailOrPhoneNumberSchema>;
 
 // ------------------------------------------------------------------
-// Sortable Columns
-// ------------------------------------------------------------------
-export type SortableColumns = {
-	[key: string]: {
-		id: string;
-		label: string;
-		columns: AnyColumn[];
-	};
-};
-
-// ------------------------------------------------------------------
 // Pagination
 // ------------------------------------------------------------------
 export function searchParamsToObject(searchParams: URLSearchParams): SearchParams {
@@ -280,51 +227,4 @@ export const PaginationOptionsSchema = z.object({
 });
 export type PaginationOptionsSchema = z.infer<typeof PaginationOptionsSchema>;
 
-interface ValidatePaginationSearchParamsProps extends PaginationOptionsSchema {
-	count?: number;
-	sortableColumns: SortableColumns;
-}
 
-export function validatePaginationSearchParams({
-	sortableColumns,
-	count = 0,
-	page = 1,
-	limit = 20,
-	sortBy,
-	sortDirection = "asc",
-}: ValidatePaginationSearchParamsProps) {
-	const validPage = z.number().int().min(1).safeParse(page);
-	const validLimit = z.number().int().min(1).max(100).safeParse(limit);
-
-	if (!validPage.success || !page) {
-		page = 1;
-	}
-
-	if (!validLimit.success || !limit) {
-		limit = 20;
-	}
-
-	const maxPage = Math.ceil(count / limit) || 1;
-
-	if (page > maxPage) {
-		page = maxPage;
-	}
-
-	if (sortDirection !== "desc") {
-		sortDirection = "asc";
-	}
-
-	if (!sortBy || !(sortBy in sortableColumns)) {
-		sortBy = Object.keys(sortableColumns)[0] ?? "id";
-	}
-
-	let orderBy = Object.values(sortableColumns)[0]?.columns.map((column) =>
-		sortDirection === "desc" ? desc(column) : asc(column),
-	);
-
-	if (sortBy && sortBy in sortableColumns) {
-		orderBy = sortableColumns[sortBy]!.columns.map((column) => (sortDirection === "desc" ? desc(column) : asc(column)));
-	}
-
-	return { count, page, limit, maxPage, sortBy, sortDirection, orderBy };
-}

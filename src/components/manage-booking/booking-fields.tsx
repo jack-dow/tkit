@@ -4,14 +4,13 @@ import * as React from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { parseDate } from "chrono-node";
-import ms from "ms";
 import { useFormContext } from "react-hook-form";
 
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
 import { useUser } from "~/app/providers";
 import { useDayjs, type Dayjs } from "~/hooks/use-dayjs";
 import { api } from "~/lib/trpc/client";
-import { cn, secondsToHumanReadable } from "~/lib/utils";
+import { cn, parseDurationToSeconds, secondsToHumanReadable } from "~/lib/utils";
 import { type RouterOutputs } from "~/server";
 import { BOOKING_TYPES_COLORS } from "../manage-booking-types/booking-types-fields";
 import { Button } from "../ui/button";
@@ -24,28 +23,6 @@ import { SearchCombobox, SearchComboboxAction } from "../ui/search-combobox";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
 import { TimeInput } from "../ui/time-input";
 import { type ManageBookingFormSchema } from "./use-manage-booking-form";
-
-function parseDurationToSeconds(str: string) {
-	let total = 0;
-	const days = str.match(/(\d+)\s*d/);
-	const hours = str.match(/(\d+)\s*h/);
-	const minutes = str.match(/(\d+)\s*m/);
-	const seconds = str.match(/(\d+)\s*s/);
-	if (days?.[1]) {
-		total += parseInt(days[1]) * 86400;
-	}
-	if (hours?.[1]) {
-		total += parseInt(hours[1]) * 3600;
-	}
-	if (minutes?.[1]) {
-		total += parseInt(minutes[1]) * 60;
-	}
-	if (seconds?.[1]) {
-		total += parseInt(seconds[1]);
-	}
-
-	return total;
-}
 
 const RichTextEditor = dynamic(() => import("../ui/rich-text-editor/rich-text-editor"), {
 	ssr: false,
@@ -108,7 +85,7 @@ function BookingFields({
 	);
 
 	const [durationInputValue, setDurationInputValue] = React.useState(
-		form.getValues("duration") ? ms(form.getValues("duration") * 1000, { long: true }) : "",
+		form.getValues("duration") ? secondsToHumanReadable(form.getValues("duration")) : "",
 	);
 
 	return (
@@ -157,7 +134,7 @@ function BookingFields({
 												onClick={() => {
 													if (form.getValues("duration") !== defaultBookingType.duration) {
 														form.setValue("duration", defaultBookingType.duration, { shouldDirty: true });
-														setDurationInputValue(ms(defaultBookingType.duration * 1000, { long: true }));
+														setDurationInputValue(secondsToHumanReadable(defaultBookingType.duration));
 													}
 												}}
 											>
@@ -192,7 +169,7 @@ function BookingFields({
 													onClick={() => {
 														if (form.getValues("duration") !== bookingType.duration) {
 															form.setValue("duration", bookingType.duration, { shouldDirty: true });
-															setDurationInputValue(ms(bookingType.duration * 1000, { long: true }));
+															setDurationInputValue(secondsToHumanReadable(bookingType.duration));
 														}
 													}}
 												>

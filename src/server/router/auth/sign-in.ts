@@ -8,15 +8,16 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { eq } from "drizzle-orm";
 // import MagicLinkEmail from "emails/magic-link-email";
-// import ms from "ms";
 // import { Resend } from "resend";
 import { z } from "zod";
 
 import { type SendMagicLinkPOSTResponse } from "~/app/api/auth/emails/magic-link/route";
 import { type SendVerificationCodePOSTResponse } from "~/app/api/auth/emails/verification-code/route";
 import { schema } from "~/db/drizzle";
+import { createSessionJWT } from "~/lib/jwt";
+import { sessionCookieOptions } from "~/lib/session-cookie-options";
 // import { env } from "~/env.mjs";
-import { createSessionJWT, generateId, getBaseUrl, logInDevelopment, sessionCookieOptions } from "~/lib/utils";
+import { generateId, getBaseUrl, logInDevelopment } from "~/lib/utils";
 import { createTRPCRouter, publicProcedure } from "../../trpc";
 
 dayjs.extend(utc);

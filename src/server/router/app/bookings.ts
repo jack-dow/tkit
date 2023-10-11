@@ -5,7 +5,8 @@ import { z } from "zod";
 import { bookings } from "~/db/schema/app";
 import { InsertBookingSchema, UpdateBookingSchema } from "~/db/validation/app";
 import { env } from "~/env.mjs";
-import { getBaseUrl, logInDevelopment, PaginationOptionsSchema, validatePaginationSearchParams } from "~/lib/utils";
+import { getBaseUrl, logInDevelopment, PaginationOptionsSchema } from "~/lib/utils";
+import { validatePaginationSearchParams } from "~/server/utils";
 import { createTRPCRouter, protectedProcedure } from "../../trpc";
 import { BOOKINGS_SORTABLE_COLUMNS } from "../sortable-columns";
 
