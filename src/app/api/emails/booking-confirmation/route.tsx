@@ -81,7 +81,7 @@ async function POST(request: NextRequest): Promise<NextResponse<SendBookingConfi
 								postalCode: true,
 								emailAddress: true,
 								timezone: true,
-								logoImageUrl: true
+								logoImageUrl: true,
 							},
 						},
 					},
@@ -153,7 +153,7 @@ async function POST(request: NextRequest): Promise<NextResponse<SendBookingConfi
 		}
 
 		await resend.emails.send({
-			from: "TKIT <bookings@tkit.app>",
+			from: "TKIT <bookings@dogworx.com.au>",
 			to: [
 				// ...booking.dog.dogToClientRelationships.map((relationship) => relationship.client.emailAddress),
 				"bookings@dogworx.com.au",

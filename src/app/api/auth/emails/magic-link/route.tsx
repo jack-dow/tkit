@@ -71,7 +71,7 @@ async function POST(request: NextRequest): Promise<NextResponse<SendMagicLinkPOS
 		});
 
 		await resend.emails.send({
-			from: "TKIT <accounts@tkit.app>",
+			from: "TKIT <accounts@dogworx.com.au>",
 			to: emailAddress,
 			subject: `Your TKIT Login`,
 			react: (

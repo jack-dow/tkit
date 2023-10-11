@@ -64,7 +64,7 @@ async function POST(request: NextRequest): Promise<NextResponse<SendVerification
 		});
 
 		await resend.sendEmail({
-			from: "TKIT <accounts@tkit.app>",
+			from: "TKIT <accounts@dogworx.com.au>",
 			to: emailAddress,
 			subject: `${code} is your verification code`,
 			react: (
