@@ -85,8 +85,6 @@ function ManageOrganizationForm(props: ManageOrganizationFormProps) {
 		}
 	}, [organization, form]);
 
-	console.log(form.getValues("logoImageUrl"));
-
 	function onSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 		e.stopPropagation();
@@ -128,8 +126,6 @@ function ManageOrganizationForm(props: ManageOrganizationFormProps) {
 						}
 					}
 				}
-
-				console.log({ data });
 
 				if (isNew) {
 					await insertMutation.mutateAsync({
