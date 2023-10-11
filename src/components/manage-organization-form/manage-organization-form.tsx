@@ -20,6 +20,7 @@ import { generateId, hasTrueValue, logInDevelopment } from "~/lib/utils";
 import { type RouterOutputs } from "~/server";
 import { OrganizationGeneralSettings } from "./organization-general-settings";
 import { OrganizationInviteLinks } from "./organization-invite-links";
+import { OrganizationLogoImage } from "./organization-logo-image";
 import { OrganizationUsers } from "./organization-users";
 
 const ManageOrganizationFormSchema = InsertOrganizationSchema.extend({
@@ -58,6 +59,11 @@ function ManageOrganizationForm(props: ManageOrganizationFormProps) {
 	const isFormDirty = hasTrueValue(form.formState.dirtyFields);
 	useConfirmPageNavigation(isFormDirty);
 
+	// Have to hold the file here because we need to upload as a File not a url and if you use a File in zod it errors when run on the server as File doesn't exist there
+	const [uploadedLogoImage, setUploadedLogoImage] = React.useState<File | null>(null);
+
+	const context = api.useContext();
+
 	const insertMutation = api.auth.organizations.insert.useMutation();
 	const updateMutation = api.auth.organizations.update.useMutation();
 
@@ -66,6 +72,7 @@ function ManageOrganizationForm(props: ManageOrganizationFormProps) {
 			form.reset(organization, {
 				keepDirty: true,
 				keepDirtyValues: true,
+				keepDefaultValues: true,
 			});
 		}
 	}, [organization, form]);
@@ -75,10 +82,57 @@ function ManageOrganizationForm(props: ManageOrganizationFormProps) {
 		e.stopPropagation();
 		void form.handleSubmit(async (data) => {
 			try {
+				let successfullyUploadedImage = false;
+
+				// If the profile image has changed, upload it
+				if (data.logoImageUrl !== organization?.logoImageUrl) {
+					if (uploadedLogoImage) {
+						try {
+							const { data: url } = await context.auth.user.organization.getLogoImageUrl.fetch({
+								fileType: uploadedLogoImage.type,
+							});
+
+							const uploadResponse = await fetch(url, {
+								method: "PUT",
+								body: uploadedLogoImage,
+							});
+
+							if (!uploadResponse.ok) {
+								throw new Error("Failed to upload profile image");
+							}
+
+							const index = url.indexOf("?");
+							if (index !== -1) {
+								data.logoImageUrl = url.substring(0, index);
+							} else {
+								data.logoImageUrl = url;
+							}
+							successfullyUploadedImage = true;
+						} catch (error) {
+							logInDevelopment(error);
+
+							toast({
+								title: "Failed to upload profile image",
+								description: "An unknown error occurred while trying to upload your profile image. Please try again.",
+							});
+						}
+					}
+				}
+
 				if (isNew) {
-					await insertMutation.mutateAsync(data);
+					await insertMutation.mutateAsync({
+						...data,
+						logoImageUrl: successfullyUploadedImage ? data.logoImageUrl : null,
+					});
 				} else {
-					await updateMutation.mutateAsync(data);
+					await updateMutation.mutateAsync(
+						successfullyUploadedImage
+							? {
+									...data,
+									logoImageUrl: data.logoImageUrl,
+							  }
+							: data,
+					);
 				}
 
 				if (user.organizationId === env.NEXT_PUBLIC_ADMIN_ORG_ID) {
@@ -128,6 +182,10 @@ function ManageOrganizationForm(props: ManageOrganizationFormProps) {
 			<Form {...form}>
 				<form onSubmit={onSubmit} className="space-y-6 lg:space-y-10">
 					<OrganizationGeneralSettings />
+
+					<Separator />
+
+					<OrganizationLogoImage setUploadedLogoImage={setUploadedLogoImage} />
 
 					<Separator />
 

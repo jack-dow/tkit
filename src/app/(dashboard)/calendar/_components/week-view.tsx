@@ -131,7 +131,7 @@ function WeekView({
 	date?: string;
 	initialData: RouterOutputs["app"]["bookings"]["byWeek"];
 	bookingTypes: RouterOutputs["app"]["bookingTypes"]["all"]["data"];
-	organization: RouterOutputs["auth"]["user"]["organization"];
+	organization: RouterOutputs["auth"]["user"]["organization"]["current"];
 }) {
 	const router = useRouter();
 	const searchParams = useSearchParams();
@@ -147,7 +147,7 @@ function WeekView({
 
 	const {
 		data: { data: organization },
-	} = api.auth.user.organization.useQuery(undefined, {
+	} = api.auth.user.organization.current.useQuery(undefined, {
 		initialData: _organization,
 	});
 

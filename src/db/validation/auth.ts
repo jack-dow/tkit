@@ -165,6 +165,7 @@ export const UpdateOrganizationSchema = InsertOrganizationSchema.pick({
 	emailAddress: true,
 	notifyAdminsAboutEmails: true,
 	notes: true,
+	logoImageUrl: true,
 })
 	.partial()
 	.extend({

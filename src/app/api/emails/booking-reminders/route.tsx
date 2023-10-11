@@ -76,6 +76,7 @@ async function GET(request: NextRequest): Promise<NextResponse<SendBookingRemind
 								postalCode: true,
 								emailAddress: true,
 								timezone: true,
+								logoImageUrl: true,
 							},
 						},
 					},

@@ -17,6 +17,10 @@ async function OrganizationSettingsPage() {
 		redirect("/sign-in");
 	}
 
+	if (session.user.organizationRole !== "owner" && session.user.organizationRole !== "admin") {
+		redirect("/");
+	}
+
 	const result = await server.auth.organizations.byId.query({ id: session.user.organizationId });
 
 	return (

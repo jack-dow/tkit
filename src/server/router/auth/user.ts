@@ -190,22 +190,60 @@ export const userRouter = createTRPCRouter({
 			return { data: signedUrl };
 		}),
 
-	organization: protectedProcedure.query(async ({ ctx }) => {
-		const organization = await ctx.db.query.organizations.findFirst({
-			where: eq(organizations.id, ctx.user.organizationId),
-			with: {
-				organizationUsers: true,
-			},
-		});
-
-		if (!organization) {
-			throw new TRPCError({
-				code: "INTERNAL_SERVER_ERROR",
-				message: "Failed to find organization",
+	organization: createTRPCRouter({
+		current: protectedProcedure.query(async ({ ctx }) => {
+			const organization = await ctx.db.query.organizations.findFirst({
+				where: eq(organizations.id, ctx.user.organizationId),
+				with: {
+					organizationUsers: true,
+				},
 			});
-		}
 
-		return { data: organization };
+			if (!organization) {
+				throw new TRPCError({
+					code: "INTERNAL_SERVER_ERROR",
+					message: "Failed to find organization",
+				});
+			}
+
+			return { data: organization };
+		}),
+
+		getLogoImageUrl: protectedProcedure
+			.input(z.object({ fileType: z.string().refine((fileType) => fileType.startsWith("image/")) }))
+			.query(async ({ ctx, input }) => {
+				if (ctx.user.organizationRole !== "owner" && ctx.user.organizationRole !== "admin") {
+					throw new TRPCError({
+						code: "UNAUTHORIZED",
+						message: "You are not authorized to update this user.",
+					});
+				}
+
+				const s3 = new S3Client({
+					region: env.AWS_S3_REGION,
+					credentials: {
+						accessKeyId: env.AWS_S3_ACCESS_KEY,
+						secretAccessKey: env.AWS_S3_SECRET_KEY,
+					},
+				});
+
+				const extension = input.fileType.split("/")[1];
+
+				if (!extension) {
+					throw new TRPCError({ code: "BAD_REQUEST", message: "Could not determine file extension." });
+				}
+
+				const command = new PutObjectCommand({
+					Bucket: env.AWS_S3_BUCKET_NAME,
+					Key: `profile-images/${ctx.user.organizationId}.${extension}`,
+				});
+
+				const signedUrl = await getSignedUrl(s3, command, {
+					expiresIn: 180,
+				});
+
+				return { data: signedUrl };
+			}),
 	}),
 
 	sessions: createTRPCRouter({

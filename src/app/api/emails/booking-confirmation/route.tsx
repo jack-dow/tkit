@@ -81,6 +81,7 @@ async function POST(request: NextRequest): Promise<NextResponse<SendBookingConfi
 								postalCode: true,
 								emailAddress: true,
 								timezone: true,
+								logoImageUrl: true
 							},
 						},
 					},

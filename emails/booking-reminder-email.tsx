@@ -46,7 +46,7 @@ type AssignedTo = Pick<InferSelectModel<typeof users>, "givenName" | "familyName
 type Dog = Pick<InferSelectModel<typeof dogs>, "givenName" | "familyName">;
 type Organization = Pick<
 	InferSelectModel<typeof organizations>,
-	"name" | "streetAddress" | "city" | "state" | "postalCode" | "emailAddress" | "timezone"
+	"name" | "streetAddress" | "city" | "state" | "postalCode" | "emailAddress" | "timezone" | "logoImageUrl"
 >;
 
 interface BookingConfirmationEmailProps {
@@ -85,7 +85,7 @@ const BookingReminderEmail = ({
 					<Container className="mx-auto my-[40px] max-w-[600px] rounded p-[20px]">
 						<Section className="mt-[32px]">
 							<Img
-								src={`${baseUrl}/static/tkit-logo.png`}
+								src={organization.logoImageUrl ?? `${baseUrl}/static/tkit-logo.png`}
 								width="60"
 								height="50"
 								alt="TKIT Logo"

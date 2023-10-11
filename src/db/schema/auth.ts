@@ -147,6 +147,7 @@ const organizations = mysqlTable("auth_organizations", {
 	postalCode: varchar("postal_code", { length: 10 }).notNull().default(""),
 	notes: text("notes"),
 	timezone: varchar("timezone", { length: 50 }).notNull().default(env.NEXT_PUBLIC_DEFAULT_TIMEZONE),
+	logoImageUrl: varchar("logo_image_url", { length: 255 }),
 });
 
 const organizationsRelations = relations(organizations, ({ many }) => ({

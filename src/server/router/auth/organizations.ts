@@ -396,7 +396,7 @@ export const organizationsRouter = createTRPCRouter({
 
 		getProfileImageUrl: protectedProcedure
 			.input(z.object({ id: z.string(), fileType: z.string().refine((fileType) => fileType.startsWith("image/")) }))
-			.mutation(async ({ ctx, input }) => {
+			.query(async ({ ctx, input }) => {
 				if (
 					ctx.user.id !== input.id &&
 					ctx.user.organizationRole !== "owner" &&
