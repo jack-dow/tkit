@@ -630,7 +630,9 @@ function WeekView({
 																</>
 															)}
 															{bookingType && booking.dog && " - "}
-															{bookingType && bookingType.name ? bookingType.name : "Booking"}
+															{bookingType && bookingType.name
+																? bookingType.name
+																: `${!booking.dog ? " " : undefined}Booking`}
 														</p>
 														{!bookingType?.showDetailsInCalendar ||
 														(bookingType?.showDetailsInCalendar && booking.details && booking.duration > 2400) ? (

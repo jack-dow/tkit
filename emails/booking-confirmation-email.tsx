@@ -82,7 +82,6 @@ const BookingConfirmationEmail = ({
 						<Section className="mt-[32px]">
 							<Img
 								src={organization.logoImageUrl ?? `${baseUrl}/static/tkit-logo.png`}
-								width="60"
 								height="50"
 								alt="TKIT Logo"
 								className="mx-auto my-0"

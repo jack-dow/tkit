@@ -36,7 +36,7 @@ const MagicLinkEmail = ({ code = "123456", token, requestedFromIp, requestedFrom
 				<Body className="m-auto bg-white font-sans">
 					<Container className="mx-auto my-[40px] w-[465px] rounded p-[20px]">
 						<Section className="mt-[32px]">
-							<Img src={`${baseUrl}/static/tkit-logo.png`} width="50" height="50" alt="TKIT Logo" className="my-0" />
+							<Img src={`${baseUrl}/static/tkit-logo.png`} height="50" alt="TKIT Logo" className="my-0" />
 						</Section>
 						<Heading className="mx-0 my-8 p-0  text-[24px] font-medium text-black">🪄 Your magic link</Heading>
 
