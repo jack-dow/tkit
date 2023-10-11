@@ -279,38 +279,40 @@ function OrganizationUserItem({
 						<p className="mt-1 text-xs leading-5 text-muted-foreground">Never logged in</p>
 					)}
 				</div>
-				{organizationUser.id !== user.id && user.organizationRole !== "member" && (
-					<DropdownMenu>
-						<DropdownMenuTrigger className="flex items-center rounded-full text-zinc-400 hover:text-zinc-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
-							<span className="sr-only">Open options</span>
-							<EllipsisVerticalIcon className="h-5 w-5" />
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end">
-							<DropdownMenuLabel>Actions</DropdownMenuLabel>
-							<DropdownMenuSeparator />
-							<DropdownMenuItem
-								onSelect={() => {
-									onEditClick();
-								}}
-							>
-								<EditIcon className="mr-2 h-4 w-4" />
-								<span className="flex-1">Edit</span>
-							</DropdownMenuItem>
-							<DropdownMenuItem
-								onSelect={() => {
-									setIsDeleting(true);
-									void onDeleteClick().finally(() => {
-										setIsDeleting(false);
-									});
-								}}
-							>
-								<TrashIcon className="mr-2 h-4 w-4" />
-								<span className="flex-1">Remove</span>
-								{isDeleting && <Loader size="sm" variant="black" className="ml-2 mr-0" />}
-							</DropdownMenuItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
-				)}
+				{organizationUser.id !== user.id &&
+					(user.organizationRole === "owner" || user.organizationRole === "admin") &&
+					!(organizationUser.organizationRole === "owner" && user.organizationRole !== "owner") && (
+						<DropdownMenu>
+							<DropdownMenuTrigger className="flex items-center rounded-full text-zinc-400 hover:text-zinc-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
+								<span className="sr-only">Open options</span>
+								<EllipsisVerticalIcon className="h-5 w-5" />
+							</DropdownMenuTrigger>
+							<DropdownMenuContent align="end">
+								<DropdownMenuLabel>Actions</DropdownMenuLabel>
+								<DropdownMenuSeparator />
+								<DropdownMenuItem
+									onSelect={() => {
+										onEditClick();
+									}}
+								>
+									<EditIcon className="mr-2 h-4 w-4" />
+									<span className="flex-1">Edit</span>
+								</DropdownMenuItem>
+								<DropdownMenuItem
+									onSelect={() => {
+										setIsDeleting(true);
+										void onDeleteClick().finally(() => {
+											setIsDeleting(false);
+										});
+									}}
+								>
+									<TrashIcon className="mr-2 h-4 w-4" />
+									<span className="flex-1">Remove</span>
+									{isDeleting && <Loader size="sm" variant="black" className="ml-2 mr-0" />}
+								</DropdownMenuItem>
+							</DropdownMenuContent>
+						</DropdownMenu>
+					)}
 			</div>
 		</li>
 	);
