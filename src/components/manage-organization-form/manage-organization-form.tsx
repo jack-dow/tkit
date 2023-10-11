@@ -69,13 +69,23 @@ function ManageOrganizationForm(props: ManageOrganizationFormProps) {
 
 	React.useEffect(() => {
 		if (organization) {
-			form.reset(organization, {
-				keepDirty: true,
-				keepDirtyValues: true,
-				keepDefaultValues: true,
-			});
+			form.reset(
+				{
+					...organization,
+					// For some reason even though the logoImageUrl is set in the organization-logo-image component using setValue with `shouldDirty` to true, that isn't respected when calling form.reset
+					logoImageUrl: form.formState.dirtyFields.logoImageUrl
+						? form.getValues("logoImageUrl")
+						: organization.logoImageUrl,
+				},
+				{
+					keepDirty: true,
+					keepDirtyValues: true,
+				},
+			);
 		}
 	}, [organization, form]);
+
+	console.log(form.getValues("logoImageUrl"));
 
 	function onSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
@@ -119,10 +129,12 @@ function ManageOrganizationForm(props: ManageOrganizationFormProps) {
 					}
 				}
 
+				console.log({ data });
+
 				if (isNew) {
 					await insertMutation.mutateAsync({
 						...data,
-						logoImageUrl: successfullyUploadedImage ? data.logoImageUrl : null,
+						logoImageUrl: data.logoImageUrl != null ? (successfullyUploadedImage ? data.logoImageUrl : null) : null,
 					});
 				} else {
 					await updateMutation.mutateAsync(

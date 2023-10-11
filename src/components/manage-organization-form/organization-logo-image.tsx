@@ -113,7 +113,7 @@ function OrganizationLogoImage({ setUploadedLogoImage }: { setUploadedLogoImage:
 									onClick={(e) => {
 										e.preventDefault();
 										e.stopPropagation();
-										form.setValue("logoImageUrl", undefined, { shouldDirty: true });
+										form.setValue("logoImageUrl", null, { shouldDirty: true });
 										setUploadedLogoImage(null);
 									}}
 								>
