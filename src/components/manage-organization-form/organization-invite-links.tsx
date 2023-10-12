@@ -47,9 +47,17 @@ function OrganizationInviteLinks({ isNew }: { isNew: boolean }) {
 				await deleteMutation.mutateAsync({
 					id: inviteLinkId,
 				});
-			}
 
-			organizationInviteLinks.remove(organizationInviteLinks.fields.findIndex((link) => link.id === inviteLinkId));
+				form.setValue(
+					"organizationInviteLinks",
+					organizationInviteLinks.fields.filter((link) => link.id !== inviteLinkId),
+					{
+						shouldDirty: false,
+					},
+				);
+			} else {
+				organizationInviteLinks.remove(organizationInviteLinks.fields.findIndex((link) => link.id === inviteLinkId));
+			}
 
 			toast({
 				title: `Invite link deleted`,

@@ -56,9 +56,15 @@ function OrganizationUsers({ isNew }: { isNew: boolean }) {
 				await deleteMutation.mutateAsync({
 					id: userId,
 				});
-			}
 
-			organizationUsers.remove(organizationUsers.fields.findIndex((field) => field.id === userId));
+				form.setValue(
+					"organizationUsers",
+					organizationUsers.fields.filter((field) => field.id !== userId),
+					{ shouldDirty: false },
+				);
+			} else {
+				organizationUsers.remove(organizationUsers.fields.findIndex((field) => field.id === userId));
+			}
 
 			toast({
 				title: `User deleted`,

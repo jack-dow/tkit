@@ -136,9 +136,15 @@ function BookingsList({
 								if (bookings.length - 1 === result.count) {
 									setHasMore(false);
 								}
-							}
 
-							allBookings.remove(allBookings.fields.findIndex((f) => f.id === confirmBookingDelete));
+								form.setValue(
+									"bookings",
+									allBookings.fields.filter((f) => f.id !== confirmBookingDelete),
+									{ shouldDirty: false },
+								);
+							} else {
+								allBookings.remove(allBookings.fields.findIndex((f) => f.id === confirmBookingDelete));
+							}
 
 							if (visibleBookings.length - 1 === 0) {
 								setPage(page - 1);
