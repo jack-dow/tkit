@@ -96,7 +96,13 @@ function MobileNavigation() {
 												<Link
 													aria-disabled={item.disabled}
 													href={item.disabled ? "#" : item.href}
-													onClick={() => setIsNavigating(item.href)}
+													onClick={() => {
+														if (!current) {
+															setIsNavigating(item.href);
+														} else {
+															setIsMobileNavigationOpen(false);
+														}
+													}}
 													className={cn(
 														current
 															? "text-zinc-950"
@@ -142,7 +148,13 @@ function MobileNavigation() {
 
 																	<Link
 																		href={subItem.href}
-																		onClick={() => setIsNavigating(subItem.href)}
+																		onClick={() => {
+																			if (!current) {
+																				setIsNavigating(subItem.href);
+																			} else {
+																				setIsMobileNavigationOpen(false);
+																			}
+																		}}
 																		className={cn(
 																			current
 																				? "bg-zinc-50 text-zinc-950 shadow-sm"
