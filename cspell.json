@@ -13,6 +13,7 @@
 		"src/db/migrations/*"
 	],
 	"words": [
+		"Authed",
 		"chrono",
 		"clsx",
 		"cmdk",

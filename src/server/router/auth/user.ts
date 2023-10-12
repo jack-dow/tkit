@@ -1,4 +1,4 @@
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { TRPCError } from "@trpc/server";
@@ -13,7 +13,7 @@ import { organizationInviteLinks, organizations, sessions, users } from "~/db/sc
 import { UpdateUserSchema, type InsertUserSchema } from "~/db/validation/auth";
 import { env } from "~/env.mjs";
 import { createSessionJWT } from "~/lib/jwt";
-import { sessionCookieOptions, sessionJWTExpiry, type SessionCookie } from "~/lib/session-cookie-options";
+import { sessionCookieOptions } from "~/lib/session-cookie-options";
 import { generateId, SignUpSchema } from "~/lib/utils";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../../trpc";
 
@@ -247,84 +247,9 @@ export const userRouter = createTRPCRouter({
 	}),
 
 	sessions: createTRPCRouter({
-		current: publicProcedure
-			.input(z.object({ validate: z.boolean().optional() }).optional())
-			.query(async ({ ctx, input }) => {
-				if (!ctx.session || ctx.session == null) {
-					return { data: null };
-				}
-
-				if (input?.validate) {
-					// SEE: ~/lib/utils for why we don't include exp in the jwt.
-					if (Math.floor(Date.now() / 1000) - ctx.session.iat > sessionJWTExpiry) {
-						const session = await ctx.db.query.sessions.findFirst({
-							where: (sessions, { eq }) => eq(sessions.id, ctx.session!.id),
-							with: {
-								user: true,
-							},
-						});
-
-						if (
-							!session ||
-							session.expiresAt < new Date() ||
-							!session.user ||
-							(session.user.bannedAt && !session.user.bannedUntil) ||
-							(session.user.bannedAt && session.user.bannedUntil && session.user.bannedUntil < new Date())
-						) {
-							if (session) {
-								await ctx.db.delete(schema.sessions).where(eq(schema.sessions.id, ctx.session.id));
-							}
-
-							cookies().set({
-								...sessionCookieOptions,
-								value: "",
-							});
-
-							return { data: null };
-						}
-
-						const newSession = {
-							id: session.id,
-							user: session.user,
-						};
-						const newSessionToken = await createSessionJWT(newSession);
-
-						cookies().set({
-							...sessionCookieOptions,
-							value: newSessionToken,
-						});
-
-						const headersList = headers();
-
-						if (
-							session.ipAddress != ctx.request.ip ||
-							session.userAgent !== headersList.get("user-agent") ||
-							session.city != ctx.request.geo?.city ||
-							session.country != ctx.request.geo?.country
-						) {
-							await ctx.db
-								.update(sessions)
-								.set({
-									ipAddress: ctx.request.ip ?? session.ipAddress,
-									userAgent: headersList.get("user-agent") || session.userAgent,
-									city: ctx.request.geo?.city || session.city,
-									country: ctx.request.geo?.country || session.country,
-									lastActiveAt: new Date(),
-								})
-								.where(eq(sessions.id, session.id));
-						} else {
-							await ctx.db.update(sessions).set({ lastActiveAt: new Date() }).where(eq(sessions.id, session.id));
-						}
-
-						return {
-							data: { ...newSession, iat: new Date().getTime(), nbf: new Date().getTime() } satisfies SessionCookie,
-							token: newSessionToken,
-						};
-					}
-				}
-
-				return { data: ctx.session };
-			}),
+		current: publicProcedure.query(({ ctx }) => {
+			return { data: ctx.session };
+		}),
 
 		all: protectedProcedure.query(async ({ ctx }) => {
 			const sessions = await ctx.db.query.sessions.findMany({
