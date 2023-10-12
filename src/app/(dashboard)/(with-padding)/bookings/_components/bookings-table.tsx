@@ -27,6 +27,7 @@ function BookingsTable({ initialData }: { initialData: RouterOutputs["app"]["boo
 	const validatedSearchParams = PaginationOptionsSchema.extend({
 		from: z.string().optional().catch(undefined),
 		to: z.string().optional().catch(undefined),
+		sortDirection: PaginationOptionsSchema.shape.sortDirection.default("desc"),
 	}).parse(searchParamsToObject(searchParams));
 
 	const result = api.app.bookings.all.useQuery(validatedSearchParams, { initialData });
