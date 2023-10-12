@@ -52,21 +52,22 @@ export function secondsToHumanReadable(seconds: number, options?: { nonPlural?: 
 
 export function parseDurationToSeconds(str: string) {
 	let total = 0;
-	const days = str.match(/(\d+)\s*d/);
-	const hours = str.match(/(\d+)\s*h/);
-	const minutes = str.match(/(\d+)\s*m/);
-	const seconds = str.match(/(\d+)\s*s/);
+	const days = str.match(/(\d*\.?\d+)\s*d/);
+	const hours = str.match(/(\d*\.?\d+)\s*h/);
+	const minutes = str.match(/(\d*\.?\d+)\s*m/);
+	const seconds = str.match(/(\d*\.?\d+)\s*s/);
+
 	if (days?.[1]) {
-		total += parseInt(days[1]) * 86400;
+		total += parseFloat(days[1]) * 86400;
 	}
 	if (hours?.[1]) {
-		total += parseInt(hours[1]) * 3600;
+		total += parseFloat(hours[1]) * 3600;
 	}
 	if (minutes?.[1]) {
-		total += parseInt(minutes[1]) * 60;
+		total += parseFloat(minutes[1]) * 60;
 	}
 	if (seconds?.[1]) {
-		total += parseInt(seconds[1]);
+		total += parseFloat(seconds[1]);
 	}
 
 	return total;
@@ -226,5 +227,3 @@ export const PaginationOptionsSchema = z.object({
 		.catch("asc"),
 });
 export type PaginationOptionsSchema = z.infer<typeof PaginationOptionsSchema>;
-
-
