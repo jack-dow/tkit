@@ -16,7 +16,7 @@ const env = createEnv({
 	 * built with invalid env vars.
 	 */
 	server: {
-		// NODE_ENV: z.enum(["development", "test", "production"]),
+		NODE_ENV: z.enum(["development", "test", "production"]),
 		CRON_SECRET: z.string().min(1),
 		DATABASE_HOST: z.string().min(1),
 		DATABASE_USERNAME: z.string().min(1),
@@ -45,7 +45,7 @@ const env = createEnv({
 		PORT: process.env.PORT,
 		NEXT_PUBLIC_ADMIN_ORG_ID: process.env.NEXT_PUBLIC_ADMIN_ORG_ID,
 		NEXT_PUBLIC_DEFAULT_TIMEZONE: process.env.NEXT_PUBLIC_DEFAULT_TIMEZONE,
-		// NODE_ENV: process.env.NODE_ENV,
+		NODE_ENV: process.env.NODE_ENV,
 		CRON_SECRET: process.env.CRON_SECRET,
 		DATABASE_HOST: process.env.DATABASE_HOST,
 		DATABASE_USERNAME: process.env.DATABASE_USERNAME,
