@@ -271,15 +271,7 @@ export const userRouter = createTRPCRouter({
 		}),
 
 		delete: protectedProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
-			await ctx.db
-				.delete(sessions)
-				.where(
-					and(
-						eq(organizations.id, ctx.user.organizationId),
-						eq(sessions.id, input.id),
-						eq(sessions.userId, ctx.user.id),
-					),
-				);
+			await ctx.db.delete(sessions).where(and(eq(sessions.id, input.id), eq(sessions.userId, ctx.user.id)));
 		}),
 	}),
 });

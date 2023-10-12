@@ -1,22 +1,14 @@
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
-import { organizations, sessions } from "~/db/schema/auth";
+import { sessions } from "~/db/schema/auth";
 import { env } from "~/env.mjs";
 import { createTRPCRouter, protectedProcedure } from "../../trpc";
 
 export const sessionsRouter = createTRPCRouter({
 	delete: protectedProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
 		if (ctx.user.organizationRole === "member") {
-			await ctx.db
-				.delete(sessions)
-				.where(
-					and(
-						eq(organizations.id, ctx.user.organizationId),
-						eq(sessions.id, input.id),
-						eq(sessions.userId, ctx.user.id),
-					),
-				);
+			await ctx.db.delete(sessions).where(and(eq(sessions.id, input.id), eq(sessions.userId, ctx.user.id)));
 			return;
 		}
 
