@@ -173,18 +173,27 @@ function ManageOrganizationUserDialogForm({
 	const insertMutation = api.auth.organizations.users.insert.useMutation();
 	const updateMutation = api.auth.organizations.users.update.useMutation();
 
-	React.useEffect(() => {
-		function syncOrganizationUser(organizationUser: InsertUserSchema) {
-			form.reset(organizationUser, {
-				keepDirty: true,
-				keepDirtyValues: true,
-			});
-		}
+	// React.useEffect(() => {
+	// 	function syncOrganizationUser(organizationUser: InsertUserSchema) {
+	// 		form.reset(
+	// 			{
+	// 				...organizationUser,
+	// 				// For some reason even though the profileImageUrl is set in the organization user profile image component using setValue with `shouldDirty` to true, that isn't respected when calling form.reset
+	// 				profileImageUrl: form.formState.dirtyFields.profileImageUrl
+	// 					? form.getValues("profileImageUrl")
+	// 					: organizationUser.profileImageUrl,
+	// 			},
+	// 			{
+	// 				keepDirty: true,
+	// 				keepDirtyValues: true,
+	// 			},
+	// 		);
+	// 	}
 
-		if (organizationUser) {
-			syncOrganizationUser(organizationUser);
-		}
-	}, [organizationUser, form]);
+	// 	if (organizationUser) {
+	// 		syncOrganizationUser(organizationUser);
+	// 	}
+	// }, [organizationUser, form]);
 
 	React.useEffect(() => {
 		setIsDirty(form.formState.isDirty);
@@ -537,22 +546,32 @@ function AccountProfileImage({ setUploadedProfileImage }: { setUploadedProfileIm
 					</div>
 					<div>
 						<div className="flex items-center space-x-3">
-							<Button variant="outline" type="button" onClick={open}>
-								Choose
-							</Button>
 							<Button
-								variant="ghost"
+								variant="outline"
 								type="button"
-								size="icon"
 								onClick={(e) => {
 									e.preventDefault();
 									e.stopPropagation();
-									form.setValue("profileImageUrl", undefined, { shouldDirty: true });
-									setUploadedProfileImage(null);
+									open();
 								}}
 							>
-								<TrashIcon className="h-4 w-4" />
+								Choose
 							</Button>
+							{profileImageUrl && (
+								<Button
+									variant="ghost"
+									type="button"
+									size="icon"
+									onClick={(e) => {
+										e.preventDefault();
+										e.stopPropagation();
+										form.setValue("profileImageUrl", undefined, { shouldDirty: true });
+										setUploadedProfileImage(null);
+									}}
+								>
+									<TrashIcon className="h-4 w-4" />
+								</Button>
+							)}
 						</div>
 						<p className="mt-2 text-sm text-muted-foreground">JPG and PNG only (max. 4MB) </p>
 					</div>

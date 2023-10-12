@@ -100,7 +100,15 @@ function AccountProfileImage({ setUploadedProfileImage }: { setUploadedProfileIm
 						</div>
 						<div>
 							<div className="flex items-center space-x-3">
-								<Button variant="outline" type="button" onClick={open}>
+								<Button
+									variant="outline"
+									type="button"
+									onClick={(e) => {
+										e.preventDefault();
+										e.stopPropagation();
+										open();
+									}}
+								>
 									Choose
 								</Button>
 								<Button
