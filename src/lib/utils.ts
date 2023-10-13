@@ -1,4 +1,5 @@
 import { type MutableRefObject, type RefCallback } from "react";
+import { type ReadonlyURLSearchParams } from "next/navigation";
 import { createId } from "@paralleldrive/cuid2";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -80,6 +81,22 @@ export function logInDevelopment(...args: unknown[]) {
 }
 
 export type SearchParams = { [key: string]: string | string[] | undefined };
+
+export function setSearchParams<
+	NewParams extends Record<string, string | number | undefined> = Record<string, string | number | undefined>,
+>(currentParams: ReadonlyURLSearchParams, newParams: NewParams) {
+	const searchParams = new URLSearchParams(currentParams);
+
+	Object.entries(newParams).forEach(([key, value]) => {
+		if (value) {
+			searchParams.set(key, value.toString());
+		} else {
+			searchParams.delete(key);
+		}
+	});
+
+	return searchParams;
+}
 
 // ------------------------------------------------------------------
 // Auth Zod Validation

@@ -3,7 +3,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams, type ReadonlyURLSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ItemIndicator } from "@radix-ui/react-select";
 import {
 	flexRender,
@@ -30,7 +30,7 @@ import {
 import { useDidUpdate } from "~/hooks/use-did-update";
 import { useViewportSize } from "~/hooks/use-viewport-size";
 import { type SortableColumns } from "~/lib/sortable-columns";
-import { type PaginationOptionsSchema } from "~/lib/utils";
+import { setSearchParams as _setSearchParams, type PaginationOptionsSchema } from "~/lib/utils";
 import { Button } from "./button";
 import { Label } from "./label";
 import { Loader } from "./loader";
@@ -46,25 +46,13 @@ declare module "@tanstack/table-core" {
 	}
 }
 
-function setSearchParams(currentParams: ReadonlyURLSearchParams, newParams: PaginationOptionsSchema) {
-	const searchParams = new URLSearchParams(currentParams);
-
-	Object.entries(newParams).forEach(([key, value]) => {
-		if (value) {
-			searchParams.set(key, value.toString());
-		} else {
-			searchParams.delete(key);
-		}
-	});
-
-	return searchParams;
-}
-
 type DataTablePagination = Omit<DataTablePaginationProps, "setIsLoading"> & {
 	count: number;
 	sortBy: string;
 	sortDirection: string;
 };
+
+const setSearchParams = _setSearchParams<PaginationOptionsSchema>;
 
 interface DataTableProps<TData, TValue, SearchResultType extends { id: string }> {
 	pagination: DataTablePagination;

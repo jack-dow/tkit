@@ -27,7 +27,7 @@ import { useUser } from "~/app/providers";
 import { useDayjs, type Dayjs, type DayjsDate } from "~/hooks/use-dayjs";
 import { useDidUpdate } from "~/hooks/use-did-update";
 import { api } from "~/lib/trpc/client";
-import { cn, secondsToHumanReadable } from "~/lib/utils";
+import { cn, secondsToHumanReadable, setSearchParams } from "~/lib/utils";
 import { type RouterOutputs } from "~/server";
 
 const DynamicManageBookingDialog = dynamic(
@@ -269,7 +269,11 @@ function WeekView({
 								selected={startDate.toDate()}
 								onSelect={(value) => {
 									setIsLoading(true);
-									router.push(`/calendar?date=${dayjs.tz(value).format("YYYY-MM-DD")}`);
+									router.push(
+										`/calendar?${setSearchParams(searchParams, {
+											date: dayjs.tz(value).format("YYYY-MM-DD"),
+										}).toString()}`,
+									);
 								}}
 								defaultMonth={startDate.toDate()}
 								initialFocus
@@ -286,20 +290,34 @@ function WeekView({
 							// If today is not in the current week
 							!(dayjs.tz().isSameOrAfter(startDate, "day") && dayjs.tz().isSameOrBefore(endDate, "day")) && (
 								<Button variant="outline" asChild onClick={() => setIsLoading(true)}>
-									<Link href="/calendar">Today</Link>
+									<Link
+										href={`/calendar?${setSearchParams(searchParams, {
+											date: undefined,
+										}).toString()}`}
+									>
+										Today
+									</Link>
 								</Button>
 							)
 						}
 
 						<Button size="icon" variant="ghost" asChild onClick={() => setIsLoading(true)}>
-							<Link href={`/calendar?date=${prevWeek.year()}-${prevWeek.month() + 1}-${prevWeek.date()}`}>
+							<Link
+								href={`/calendar?${setSearchParams(searchParams, {
+									date: `${prevWeek.year()}-${prevWeek.month() + 1}-${prevWeek.date()}`,
+								}).toString()}`}
+							>
 								<span className="sr-only">Previous week</span>
 								<ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
 							</Link>
 						</Button>
 						<span className="relative -mx-px h-5 w-px bg-gray-300 md:hidden" />
 						<Button size="icon" variant="ghost" asChild onClick={() => setIsLoading(true)}>
-							<Link href={`/calendar?date=${nextWeek.year()}-${nextWeek.month() + 1}-${nextWeek.date()}`}>
+							<Link
+								href={`/calendar?${setSearchParams(searchParams, {
+									date: `${nextWeek.year()}-${nextWeek.month() + 1}-${nextWeek.date()}`,
+								}).toString()}`}
+							>
 								<span className="sr-only">Next week</span>
 								<ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
 							</Link>
@@ -332,7 +350,7 @@ function WeekView({
 										onClick={() => {
 											if (user.id !== assignedToId) {
 												setIsLoading(true);
-												router.push(`/calendar?date=${date.format("YYYY-MM-DD")}&assignedTo=${user.id}`);
+												router.push(`/calendar?${setSearchParams(searchParams, { assignedTo: user.id }).toString()}`);
 											}
 										}}
 									>
