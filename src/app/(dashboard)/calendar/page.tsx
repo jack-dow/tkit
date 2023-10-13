@@ -21,7 +21,7 @@ async function WeeklyCalendar({ searchParams }: { searchParams: SearchParams }) 
 		server.app.bookingTypes.all.query({}),
 		server.app.bookings.byWeek.query({
 			date: date?.toISOString(),
-			assignedTo: z
+			assignedToId: z
 				.string()
 				.optional()
 				.catch(undefined)

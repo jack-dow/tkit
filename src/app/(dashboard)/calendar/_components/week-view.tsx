@@ -142,14 +142,17 @@ function WeekView({
 	const date = (_date ? dayjs.utc(_date).local() : dayjs.tz()).startOf("day");
 
 	const {
-		data: { data: bookings },
-	} = api.app.bookings.byWeek.useQuery({ date: date.toISOString() }, { initialData });
-
-	const {
 		data: { data: organization },
 	} = api.auth.user.organization.current.useQuery(undefined, {
 		initialData: _organization,
 	});
+
+	const assignedToId = searchParams.get("assignedTo") ?? user.id;
+	const assignedTo = organization.organizationUsers.find((u) => u.id === assignedToId) ?? null;
+
+	const {
+		data: { data: bookings },
+	} = api.app.bookings.byWeek.useQuery({ date: date.toISOString(), assignedToId }, { initialData });
 
 	const containerRef = React.useRef<HTMLDivElement>(null);
 	const containerNavRef = React.useRef<HTMLDivElement>(null);
@@ -235,9 +238,6 @@ function WeekView({
 			}
 		}
 	}
-
-	const assignedToId = searchParams.get("assignedTo") ?? user.id;
-	const assignedTo = organization.organizationUsers.find((u) => u.id === assignedToId) ?? null;
 
 	return (
 		<div className="max-h-screen overflow-hidden">

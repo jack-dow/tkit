@@ -203,7 +203,7 @@ export const bookingsRouter = createTRPCRouter({
 			z
 				.object({
 					date: z.string().pipe(z.coerce.date()).optional().catch(undefined),
-					assignedTo: z.string().optional(),
+					assignedToId: z.string().optional(),
 				})
 				.optional(),
 		)
@@ -217,7 +217,7 @@ export const bookingsRouter = createTRPCRouter({
 					// And it shouldn't over-fetch too much.
 					gte(bookings.date, date.subtract(14, "hours").toDate()),
 					lt(bookings.date, date.add(7, "days").add(12, "hours").toDate()),
-					input?.assignedTo ? eq(bookings.assignedToId, input.assignedTo) : undefined,
+					input?.assignedToId ? eq(bookings.assignedToId, input.assignedToId) : eq(bookings.assignedToId, ctx.user.id),
 				),
 				orderBy: (bookings, { asc, desc }) => [asc(bookings.date), desc(bookings.duration), asc(bookings.id)],
 				with: {
