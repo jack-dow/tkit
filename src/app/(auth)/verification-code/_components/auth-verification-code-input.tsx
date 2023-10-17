@@ -67,7 +67,7 @@ function AuthVerificationCodeInput() {
 				<VerificationCodeInput
 					onSubmit={async (verificationCode) => {
 						try {
-							await validateVerificationCodeMutation.mutateAsync({ code: verificationCode });
+							await validateVerificationCodeMutation.mutateAsync({ code: verificationCode, emailAddress });
 
 							toast({
 								title: "Email address verified",

@@ -7,9 +7,7 @@ import * as app from "./schema/app";
 import * as auth from "./schema/auth";
 
 const connection = connect({
-	host: env.DATABASE_HOST,
-	username: env.DATABASE_USERNAME,
-	password: env.DATABASE_PASSWORD,
+	url: env.DATABASE_URL,
 });
 
 function formatQuery(query: string, params: unknown[]): string {

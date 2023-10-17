@@ -194,61 +194,72 @@ export const signInRouter = createTRPCRouter({
 			}
 		}),
 
-		validate: publicProcedure.input(z.object({ code: z.string() })).mutation(async ({ ctx, input }) => {
-			const verificationCode = await ctx.db.query.verificationCodes.findFirst({
-				where: (verificationCodes, { eq }) => eq(verificationCodes.code, input.code),
-				with: {
-					user: true,
-				},
-			});
-
-			if (!verificationCode) {
-				throw new TRPCError({
-					code: "NOT_FOUND",
-					message: "Verification code not found",
+		validate: publicProcedure
+			.input(z.object({ code: z.string(), emailAddress: z.string() }))
+			.mutation(async ({ ctx, input }) => {
+				const verificationCode = await ctx.db.query.verificationCodes.findFirst({
+					where: (verificationCodes, { eq }) => eq(verificationCodes.code, input.code),
+					with: {
+						user: true,
+					},
 				});
-			}
 
-			if (!verificationCode.user) {
-				throw new TRPCError({
-					code: "BAD_REQUEST",
-					message: "User not found",
+				if (!verificationCode) {
+					throw new TRPCError({
+						code: "NOT_FOUND",
+						message: "Verification code not found",
+					});
+				}
+
+				if (!verificationCode.user) {
+					throw new TRPCError({
+						code: "BAD_REQUEST",
+						message: "User not found",
+					});
+				}
+
+				if (verificationCode.user.emailAddress !== input.emailAddress) {
+					throw new TRPCError({
+						code: "NOT_FOUND",
+						message: "Verification code not found",
+					});
+				}
+
+				if (
+					verificationCode?.user?.emailAddress.toLowerCase() !== "test@tkit.app" &&
+					verificationCode?.user?.emailAddress.toLowerCase() !== "test@dogworx.com.au"
+				) {
+					await ctx.db.delete(schema.verificationCodes).where(eq(schema.verificationCodes.id, verificationCode.id));
+				}
+
+				if (verificationCode.expiresAt < new Date()) {
+					throw new TRPCError({
+						code: "BAD_REQUEST",
+						message: "Verification code expired",
+					});
+				}
+
+				const sessionId = generateId();
+
+				const sessionToken = await createSessionJWT({
+					id: sessionId,
+					user: verificationCode.user,
 				});
-			}
 
-			if (
-				verificationCode?.user?.emailAddress.toLowerCase() !== "test@tkit.app" &&
-				verificationCode?.user?.emailAddress.toLowerCase() !== "test@dogworx.com.au"
-			) {
-				await ctx.db.delete(schema.verificationCodes).where(eq(schema.verificationCodes.id, verificationCode.id));
-			}
+				const ipAddress = ctx.request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? undefined;
 
-			if (verificationCode.expiresAt < new Date()) {
-				throw new TRPCError({
-					code: "BAD_REQUEST",
-					message: "Verification code expired",
+				await ctx.db.insert(schema.sessions).values({
+					id: sessionId,
+					userId: verificationCode.user.id,
+					expiresAt: new Date(Date.now() + sessionCookieOptions.maxAge),
+					ipAddress: ipAddress && ipAddress.length > 15 ? undefined : ipAddress,
+					userAgent: ctx.request.headers.get("user-agent"),
 				});
-			}
 
-			const sessionId = generateId();
-
-			const sessionToken = await createSessionJWT({
-				id: sessionId,
-				user: verificationCode.user,
-			});
-
-			await ctx.db.insert(schema.sessions).values({
-				id: sessionId,
-				userId: verificationCode.user.id,
-				expiresAt: new Date(Date.now() + sessionCookieOptions.maxAge),
-				ipAddress: ctx.request.headers.get("x-forwarded-for"),
-				userAgent: ctx.request.headers.get("user-agent"),
-			});
-
-			cookies().set({
-				...sessionCookieOptions,
-				value: sessionToken,
-			});
-		}),
+				cookies().set({
+					...sessionCookieOptions,
+					value: sessionToken,
+				});
+			}),
 	}),
 });

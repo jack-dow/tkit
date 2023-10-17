@@ -25,6 +25,9 @@ export function getBaseUrl(options?: { absolute?: boolean }) {
 		return ""; // browser should use relative url
 	}
 	if (env.VERCEL_URL) return env.VERCEL_URL; // SSR should use vercel url
+	if (env.NODE_ENV === "production") {
+		if (env.NEXT_PUBLIC_APP_URL) return env.NEXT_PUBLIC_APP_URL;
+	}
 
 	return `http://localhost:${env.PORT}`; // dev SSR should use localhost
 }
@@ -153,11 +156,10 @@ export function hasTrueValue(obj: NestedBooleanObject): boolean {
 	return false;
 }
 
-type RefType<T> = MutableRefObject<T> | RefCallback<T> | null;
-
 // ------------------------------------------------------------------
 // React Refs
 // ------------------------------------------------------------------
+type RefType<T> = MutableRefObject<T> | RefCallback<T> | null;
 export const shareRef =
 	<T>(refA: RefType<T | null>, refB: RefType<T | null>): RefCallback<T> =>
 	(instance) => {

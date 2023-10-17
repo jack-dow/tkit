@@ -9,6 +9,9 @@ export function getBaseUrl(options?: { absolute?: boolean }) {
 		return ""; // browser should use relative url
 	}
 	if (env.VERCEL_URL) return env.VERCEL_URL; // SSR should use vercel url
+	if (env.NODE_ENV === "production") {
+		if (env.NEXT_PUBLIC_APP_URL) return env.NEXT_PUBLIC_APP_URL;
+	}
 
 	return `http://localhost:${env.PORT}`; // dev SSR should use localhost
 }

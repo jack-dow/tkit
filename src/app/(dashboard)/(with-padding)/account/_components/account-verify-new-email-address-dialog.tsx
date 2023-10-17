@@ -94,7 +94,11 @@ function AccountVerifyNewEmailAddressDialog({
 						<VerificationCodeInput
 							onSubmit={async (verificationCode) => {
 								try {
-									await validateVerificationCodeMutation.mutateAsync({ code: verificationCode });
+									if (!emailAddress) {
+										throw new Error("Invalid email address");
+									}
+
+									await validateVerificationCodeMutation.mutateAsync({ code: verificationCode, emailAddress });
 
 									setOpen(false);
 									toast({
