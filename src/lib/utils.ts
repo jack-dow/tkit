@@ -101,6 +101,20 @@ export function setSearchParams<
 	return searchParams;
 }
 
+/**
+ * Returns the offset in minutes from UTC for a given timezone
+ */
+export const getTimezoneOffset = (timeZone = "UTC", date = new Date()) => {
+	try {
+		const utcDate = new Date(date.toLocaleString("en-US", { timeZone: "UTC" }));
+		const tzDate = new Date(date.toLocaleString("en-US", { timeZone }));
+		return (tzDate.getTime() - utcDate.getTime()) / 6e4;
+	} catch (error) {
+		logInDevelopment(error);
+		return 0;
+	}
+};
+
 // ------------------------------------------------------------------
 // Auth Zod Validation
 // ------------------------------------------------------------------

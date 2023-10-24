@@ -5,7 +5,7 @@ import { z } from "zod";
 import { bookings } from "~/db/schema/app";
 import { InsertBookingSchema, UpdateBookingSchema } from "~/db/validation/app";
 import { env } from "~/env.mjs";
-import { getBaseUrl, logInDevelopment, PaginationOptionsSchema } from "~/lib/utils";
+import { getBaseUrl, getTimezoneOffset, logInDevelopment, PaginationOptionsSchema } from "~/lib/utils";
 import { validatePaginationSearchParams } from "~/server/utils";
 import { createTRPCRouter, protectedProcedure } from "../../trpc";
 import { BOOKINGS_SORTABLE_COLUMNS } from "../sortable-columns";
@@ -19,13 +19,15 @@ export const bookingsRouter = createTRPCRouter({
 			}),
 		)
 		.query(async ({ ctx, input }) => {
-			let fromDate = input?.from ? dayjs(input.from) : undefined;
+			const userTimezoneOffset = getTimezoneOffset(ctx.user.timezone);
+
+			let fromDate = input.from ? dayjs(input.from.substring(0, 10)) : undefined;
 
 			if (!fromDate?.isValid()) {
 				fromDate = undefined;
 			}
 
-			let toDate = input?.to ? dayjs(input.to) : undefined;
+			let toDate = input.to ? dayjs(input.to.substring(0, 10)) : undefined;
 
 			if (!toDate?.isValid()) {
 				toDate = undefined;
@@ -39,8 +41,10 @@ export const bookingsRouter = createTRPCRouter({
 				.where(
 					and(
 						eq(bookings.organizationId, ctx.user.organizationId),
-						fromDate ? gte(bookings.date, fromDate.subtract(12, "hours").toDate()) : undefined,
-						toDate ? lt(bookings.date, toDate.add(14, "hours").toDate()) : undefined,
+						fromDate ? gte(bookings.date, fromDate.subtract(userTimezoneOffset, "minutes").toDate()) : undefined,
+						toDate
+							? lt(bookings.date, toDate.endOf("day").subtract(userTimezoneOffset, "minutes").toDate())
+							: undefined,
 					),
 				);
 
@@ -76,8 +80,8 @@ export const bookingsRouter = createTRPCRouter({
 				offset: (page - 1) * limit,
 				where: and(
 					eq(bookings.organizationId, ctx.user.organizationId),
-					fromDate ? gte(bookings.date, fromDate.subtract(12, "hours").toDate()) : undefined,
-					toDate ? lt(bookings.date, toDate.add(14, "hours").toDate()) : undefined,
+					fromDate ? gte(bookings.date, fromDate.subtract(userTimezoneOffset, "minutes").toDate()) : undefined,
+					toDate ? lt(bookings.date, toDate.endOf("day").subtract(userTimezoneOffset, "minutes").toDate()) : undefined,
 				),
 				orderBy: (bookings, { asc }) => (orderBy ? [...orderBy, asc(bookings.id)] : [asc(bookings.id)]),
 			});
@@ -202,21 +206,28 @@ export const bookingsRouter = createTRPCRouter({
 		.input(
 			z
 				.object({
-					date: z.string().pipe(z.coerce.date()).optional().catch(undefined),
+					date: z.string().optional().catch(undefined),
 					assignedToId: z.string().optional(),
 				})
 				.optional(),
 		)
 		.query(async ({ ctx, input }) => {
-			const date = dayjs(input?.date).startOf("day");
+			const userTimezoneOffset = getTimezoneOffset(ctx.user.timezone);
+			let date = dayjs(input?.date).startOf("day");
+
+			if (!date.isValid()) {
+				date = dayjs().startOf("day");
+			}
+
+			date = date.subtract(userTimezoneOffset, "minutes");
 
 			const data = await ctx.db.query.bookings.findMany({
 				where: and(
 					eq(bookings.organizationId, ctx.user.organizationId),
 					// -14/+12 hours to account for timezones. Easier to do this than to manage conversion based on user's timezone.
 					// And it shouldn't over-fetch too much.
-					gte(bookings.date, date.subtract(14, "hours").toDate()),
-					lt(bookings.date, date.add(7, "days").add(12, "hours").toDate()),
+					gte(bookings.date, date.toDate()),
+					lt(bookings.date, date.add(7, "days").toDate()),
 					input?.assignedToId ? eq(bookings.assignedToId, input.assignedToId) : eq(bookings.assignedToId, ctx.user.id),
 				),
 				orderBy: (bookings, { asc, desc }) => [asc(bookings.date), desc(bookings.duration), asc(bookings.id)],

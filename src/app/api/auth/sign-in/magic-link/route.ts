@@ -70,6 +70,7 @@ async function GET(request: NextRequest) {
 			userAgent: headersList.get("user-agent"),
 			city: request.geo?.city,
 			country: request.geo?.country,
+			lastActiveAt: new Date(),
 		});
 
 		cookies().set({

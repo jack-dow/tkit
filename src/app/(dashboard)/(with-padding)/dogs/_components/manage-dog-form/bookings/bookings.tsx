@@ -57,7 +57,7 @@ function Bookings({
 								context.app.bookings.search
 									.fetch({
 										dogId: form.getValues("id"),
-										after: dayjs.tz().startOf("day").toDate(),
+										after: dayjs.tz().toDate(),
 										sortDirection: "asc",
 									})
 									.then(({ data }) => {

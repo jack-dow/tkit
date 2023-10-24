@@ -139,8 +139,6 @@ function WeekView({
 	const { dayjs } = useDayjs();
 	const user = useUser();
 
-	const date = (_date ? dayjs.utc(_date).local() : dayjs.tz()).startOf("day");
-
 	const {
 		data: { data: organization },
 	} = api.auth.user.organization.current.useQuery(undefined, {
@@ -152,21 +150,24 @@ function WeekView({
 
 	const {
 		data: { data: bookings },
-	} = api.app.bookings.byWeek.useQuery({ date: date.toISOString(), assignedToId }, { initialData });
+	} = api.app.bookings.byWeek.useQuery({ date: _date, assignedToId }, { initialData });
 
 	const containerRef = React.useRef<HTMLDivElement>(null);
 	const containerNavRef = React.useRef<HTMLDivElement>(null);
 	const containerOffsetRef = React.useRef<HTMLDivElement>(null);
 	const calendarRef = React.useRef<HTMLOListElement>(null);
 
-	const startDate = date;
-	const endDate = date.add(6, "days").endOf("day");
+	let startDate = dayjs.tz(_date).startOf("day");
+	if (!startDate.isValid()) {
+		startDate = dayjs.tz().startOf("day");
+	}
+	const endDate = startDate.add(6, "days").endOf("day");
 
-	const prevWeek = date.subtract(7, "days");
-	const nextWeek = date.add(7, "days");
+	const prevWeek = startDate.subtract(7, "days");
+	const nextWeek = startDate.add(7, "days");
 
 	// Visible day on mobile device
-	const [visibleDate, setVisibleDate] = React.useState(date.date());
+	const [visibleDate, setVisibleDate] = React.useState(startDate.date());
 
 	const [isManageBookingDialogOpen, setIsManageBookingDialogOpen] = React.useState(false);
 	const [selectedBooking, setSelectedBooking] = React.useState<BookingsByWeek[number] | undefined>(undefined);
@@ -205,7 +206,7 @@ function WeekView({
 	useDidUpdate(() => {
 		if (isLoading) {
 			setIsLoading(false);
-			setVisibleDate(date.date());
+			setVisibleDate(startDate.date());
 		}
 	}, [searchParams]);
 
@@ -213,7 +214,7 @@ function WeekView({
 
 	if (bookings) {
 		for (const booking of bookings) {
-			const date = dayjs.utc(booking.date).local();
+			const date = dayjs.tz(booking.date);
 
 			if (date.isBefore(startDate) || date.isAfter(endDate)) {
 				continue;

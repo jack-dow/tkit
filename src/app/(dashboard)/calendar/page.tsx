@@ -10,17 +10,20 @@ export const metadata: Metadata = {
 };
 
 async function WeeklyCalendar({ searchParams }: { searchParams: SearchParams }) {
-	const date = z
+	let date = z
 		.string()
-		.pipe(z.coerce.date())
 		.optional()
 		.catch(undefined)
-		.parse(searchParams?.date ?? new Date().toISOString());
+		.parse(searchParams?.date);
+
+	if (date) {
+		date = date.substring(0, 10);
+	}
 
 	const [bookingTypes, bookings, organization] = await Promise.all([
 		server.app.bookingTypes.all.query({}),
 		server.app.bookings.byWeek.query({
-			date: date?.toISOString(),
+			date,
 			assignedToId: z
 				.string()
 				.optional()
@@ -30,14 +33,7 @@ async function WeeklyCalendar({ searchParams }: { searchParams: SearchParams }) 
 		server.auth.user.organization.current.query(),
 	]);
 
-	return (
-		<WeekView
-			date={date?.toISOString()}
-			initialData={bookings}
-			bookingTypes={bookingTypes?.data}
-			organization={organization}
-		/>
-	);
+	return <WeekView date={date} initialData={bookings} bookingTypes={bookingTypes?.data} organization={organization} />;
 }
 
 export default WeeklyCalendar;

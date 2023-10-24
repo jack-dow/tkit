@@ -37,31 +37,6 @@ function BookingsTable({ initialData }: { initialData: RouterOutputs["app"]["boo
 		RouterOutputs["app"]["bookings"]["all"]["data"][number] | null
 	>(null);
 
-	// Remove bookings that were added to ensure timezones are correct
-	if (searchParams.get("from") || searchParams.get("to")) {
-		const startingLength = initialData.data.length;
-
-		initialData.data = initialData.data.filter((booking) => {
-			const from = searchParams.get("from") ? dayjs.tz(searchParams.get("from") as string).toDate() : undefined;
-			const to = searchParams.get("to") ? dayjs.tz(searchParams.get("to") as string).toDate() : undefined;
-
-			if (from && dayjs.tz(booking.date).isBefore(from)) {
-				return false;
-			}
-
-			if (to && dayjs.tz(booking.date).isAfter(to)) {
-				return false;
-			}
-
-			return true;
-		});
-
-		if (startingLength !== initialData.data.length) {
-			initialData.pagination.count -= startingLength - initialData.data.length;
-			initialData.pagination.maxPage = Math.ceil(initialData.pagination.count / initialData.pagination.limit);
-		}
-	}
-
 	return (
 		<>
 			<DestructiveActionDialog
