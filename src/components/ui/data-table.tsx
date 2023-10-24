@@ -5,17 +5,6 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ItemIndicator } from "@radix-ui/react-select";
-import {
-	flexRender,
-	getCoreRowModel,
-	getFacetedRowModel,
-	getFacetedUniqueValues,
-	getFilteredRowModel,
-	getPaginationRowModel,
-	getSortedRowModel,
-	useReactTable,
-	type ColumnDef,
-} from "@tanstack/react-table";
 
 import {
 	CheckIcon,
@@ -39,26 +28,28 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { Separator } from "./separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./table";
 
-declare module "@tanstack/table-core" {
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	interface ColumnMeta<TData, TValue> {
-		className?: string;
-	}
-}
-
 type DataTablePagination = Omit<DataTablePaginationProps, "setIsLoading"> & {
 	count: number;
 	sortBy: string;
 	sortDirection: string;
 };
 
-const setSearchParams = _setSearchParams<PaginationOptionsSchema>;
+type ColumnDef<TValue> = Array<{
+	id: string;
+	header: string | React.ReactNode;
+	cell: (value: TValue) => string | React.ReactNode;
+	meta?: {
+		classNames?: {
+			header?: string
+		}
+	};
+}>;
 
-interface DataTableProps<TData, TValue, SearchResultType extends { id: string }> {
+interface DataTableProps<TData extends Array<{ id: string }>, SearchResultType extends { id: string }> {
+	data: TData;
+	columns: ColumnDef<TData[number]>;
 	pagination: DataTablePagination;
-	columns: ColumnDef<TData, TValue>[];
 	sortableColumns: SortableColumns;
-	data: TData[];
 	/** Allow for passing of custom base path. E.g. want to redirect to /settings/booking-type instead of just /booking-type */
 	basePath?: string;
 	search:
@@ -67,43 +58,23 @@ interface DataTableProps<TData, TValue, SearchResultType extends { id: string }>
 		  })
 		| { component: ({ setIsLoading }: { setIsLoading?: (isLoading: boolean) => void }) => JSX.Element };
 }
+const setSearchParams = _setSearchParams<PaginationOptionsSchema>;
 
-function DataTable<TData extends { id: string }, TValue, SearchResultType extends { id: string }>({
+function DataTable<TData extends Array<{ id: string }>, SearchResultType extends { id: string }>({
 	pagination: { count, sortBy, sortDirection, page, maxPage, limit },
 	columns,
 	sortableColumns,
 	data,
 	basePath,
 	search,
-}: DataTableProps<TData, TValue, SearchResultType>) {
+}: DataTableProps<TData, SearchResultType>) {
 	const router = useRouter();
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
 
 	const windowSize = useViewportSize();
 
-	const [rowSelection, setRowSelection] = React.useState({});
 	const [isLoading, setIsLoading] = React.useState(false);
-
-	const table = useReactTable({
-		data,
-		columns,
-		state: {
-			rowSelection,
-			pagination: {
-				pageIndex: 0,
-				pageSize: limit,
-			},
-		},
-		enableRowSelection: true,
-		onRowSelectionChange: setRowSelection,
-		getCoreRowModel: getCoreRowModel(),
-		getFilteredRowModel: getFilteredRowModel(),
-		getPaginationRowModel: getPaginationRowModel(),
-		getSortedRowModel: getSortedRowModel(),
-		getFacetedRowModel: getFacetedRowModel(),
-		getFacetedUniqueValues: getFacetedUniqueValues(),
-	});
 
 	useDidUpdate(() => {
 		if (isLoading) {
@@ -209,41 +180,53 @@ function DataTable<TData extends { id: string }, TValue, SearchResultType extend
 			<main className="rounded-md border bg-white">
 				<Table>
 					<TableHeader>
-						{table.getHeaderGroups().map((headerGroup) => (
-							<TableRow key={headerGroup.id} clickable={false}>
-								{headerGroup.headers.map((header) => {
-									return (
-										<TableHead key={header.id} className={header.column.columnDef.meta?.className}>
-											{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-										</TableHead>
-									);
-								})}
-							</TableRow>
-						))}
+						<TableRow clickable={false}>
+							{columns.map((column) => {
+								const isString = typeof column.header === "string";
+
+								return (
+									<TableHead key={`${column.id}-header`} className={column.meta?.classNames?.header}>
+										{isString ? (
+											<div className="text-xs">
+												<span className="truncate">{column.header}</span>
+											</div>
+										) : (
+											column.header
+										)}
+									</TableHead>
+								);
+							})}
+						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{table.getRowModel().rows?.length ? (
-							table.getRowModel().rows.map((row) => (
+						{data.length ? (
+							data.map((row) => (
 								<TableRow
 									onClick={(event) => {
 										setIsLoading(true);
 										if (event.metaKey || event.ctrlKey) {
-											window.open(`${pathname}/${row.original.id}`, "_blank");
+											window.open(`${pathname}/${row.id}`, "_blank");
 										} else {
-											router.push(`${pathname}/${row.original.id}`, {
-												scroll: false,
-											});
+											router.push(`${pathname}/${row.id}`);
 										}
 									}}
 									key={row.id}
-									data-state={row.getIsSelected() && "selected"}
 									className="cursor-pointer"
 								>
-									{row.getVisibleCells().map((cell) => (
-										<TableCell key={cell.id} className={cell.column.columnDef.meta?.className}>
-											{flexRender(cell.column.columnDef.cell, cell.getContext())}
-										</TableCell>
-									))}
+									{columns.map((column) => {
+										const cell = column.cell(row);
+										return (
+											<TableCell key={`${row.id}-${column.id}`}>
+												{typeof cell === "string" ? (
+													<div className="flex select-none space-x-2">
+														<span className="truncate font-medium capitalize">{cell}</span>
+													</div>
+												) : (
+													cell
+												)}
+											</TableCell>
+										);
+									})}
 								</TableRow>
 							))
 						) : (

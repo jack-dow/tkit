@@ -1,16 +1,26 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
+import { Button } from "~/components/ui/button";
 import { DataTable } from "~/components/ui/data-table";
 import { DestructiveActionDialog } from "~/components/ui/destructive-action-dialog";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
+import { EditIcon, EllipsisVerticalIcon, TrashIcon } from "~/components/ui/icons";
 import { useToast } from "~/components/ui/use-toast";
 import { DOGS_SORTABLE_COLUMNS } from "~/lib/sortable-columns";
 import { api } from "~/lib/trpc/client";
 import { logInDevelopment, PaginationOptionsSchema, searchParamsToObject } from "~/lib/utils";
 import { type RouterOutputs } from "~/server";
-import { createDogsTableColumns } from "./dogs-table-columns";
 
 function DogsTable({ initialData }: { initialData: RouterOutputs["app"]["dogs"]["all"] }) {
 	const { toast } = useToast();
@@ -67,11 +77,92 @@ function DogsTable({ initialData }: { initialData: RouterOutputs["app"]["dogs"][
 					},
 					resultLabel: (dog) => `${dog.givenName} ${dog.familyName}`,
 				}}
-				columns={createDogsTableColumns((dog) => {
-					setConfirmDogDelete(dog);
-				})}
 				sortableColumns={DOGS_SORTABLE_COLUMNS}
 				{...result.data}
+				columns={[
+					{
+						id: "givenName",
+						header: "Name",
+						cell: (row) => {
+							return (
+								<div className="flex select-none space-x-2">
+									<span className="truncate font-medium capitalize">{row.givenName}</span>
+								</div>
+							);
+						},
+					},
+					{
+						id: "familyName",
+						header: "Family Name",
+						cell: (row) => {
+							return (
+								<div className="flex select-none space-x-2">
+									<span className="truncate font-medium capitalize">{row.familyName}</span>
+								</div>
+							);
+						},
+					},
+					{
+						id: "breed",
+						header: "Breed",
+						cell: (row) => {
+							return (
+								<div className="flex max-w-[500px] select-none items-center capitalize">
+									<span className="truncate capitalize">{row.breed}</span>
+								</div>
+							);
+						},
+					},
+					{
+						id: "color",
+						header: "Color",
+						cell: (row) => {
+							return (
+								<div className="flex select-none items-center ">
+									<span className="truncate capitalize">{row.color}</span>
+								</div>
+							);
+						},
+					},
+					{
+						id: "actions",
+						header: "",
+						cell: (row) => (
+							<div className="flex justify-end">
+								<DropdownMenu>
+									<DropdownMenuTrigger asChild>
+										<Button variant="ghost" className="flex h-8 w-8 p-0 data-[state=open]:bg-muted">
+											<EllipsisVerticalIcon className="h-4 w-4" />
+											<span className="sr-only">Open menu</span>
+										</Button>
+									</DropdownMenuTrigger>
+									<DropdownMenuContent align="end" className="w-[160px]">
+										<DropdownMenuLabel>Actions</DropdownMenuLabel>
+										<DropdownMenuSeparator />
+										<DropdownMenuItem asChild>
+											<Link href={`/dogs/${row.id}`} className="hover:cursor-pointer">
+												<EditIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+												Edit
+											</Link>
+										</DropdownMenuItem>
+
+										<DropdownMenuItem
+											onClick={(e) => {
+												e.preventDefault();
+												e.stopPropagation();
+
+												setConfirmDogDelete(row);
+											}}
+										>
+											<TrashIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+											Delete
+										</DropdownMenuItem>
+									</DropdownMenuContent>
+								</DropdownMenu>
+							</div>
+						),
+					},
+				]}
 			/>
 		</>
 	);

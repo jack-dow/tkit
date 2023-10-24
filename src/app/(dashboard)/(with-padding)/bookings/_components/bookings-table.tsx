@@ -1,15 +1,25 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { type DateRange } from "react-day-picker";
 import { z } from "zod";
 
+import { BOOKING_TYPES_COLORS } from "~/components/manage-booking-types/booking-types-fields";
 import { Button } from "~/components/ui/button";
 import { Calendar } from "~/components/ui/calendar";
 import { DataTable } from "~/components/ui/data-table";
 import { DestructiveActionDialog } from "~/components/ui/destructive-action-dialog";
-import { CalendarIcon, ChevronUpDownIcon } from "~/components/ui/icons";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
+import { CalendarIcon, ChevronUpDownIcon, EditIcon, EllipsisVerticalIcon, TrashIcon } from "~/components/ui/icons";
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
 import { useToast } from "~/components/ui/use-toast";
 import { useDayjs } from "~/hooks/use-dayjs";
@@ -17,7 +27,6 @@ import { BOOKINGS_SORTABLE_COLUMNS } from "~/lib/sortable-columns";
 import { api } from "~/lib/trpc/client";
 import { cn, logInDevelopment, PaginationOptionsSchema, searchParamsToObject } from "~/lib/utils";
 import { type RouterOutputs } from "~/server";
-import { createBookingsTableColumns } from "./bookings-table-columns";
 
 function BookingsTable({ initialData }: { initialData: RouterOutputs["app"]["bookings"]["all"] }) {
 	const { dayjs } = useDayjs();
@@ -69,14 +78,124 @@ function BookingsTable({ initialData }: { initialData: RouterOutputs["app"]["boo
 			/>
 
 			<DataTable
-				columns={createBookingsTableColumns(dayjs, (booking) => {
-					setConfirmBookingDelete(booking);
-				})}
 				sortableColumns={BOOKINGS_SORTABLE_COLUMNS}
 				{...result.data}
 				search={{
 					component: DateRangeSearch,
 				}}
+				columns={[
+					{
+						id: "bookingType",
+						header: "Booking Type",
+						cell: (row) => {
+							const bookingType = row.bookingType;
+							return (
+								<div className="relative flex select-none space-x-2">
+									<div
+										className={cn(
+											"w-4 h-4 rounded-full absolute mt-0.5 left-2 flex items-center justify-center",
+											bookingType && bookingType?.color in BOOKING_TYPES_COLORS
+												? BOOKING_TYPES_COLORS[bookingType.color as keyof typeof BOOKING_TYPES_COLORS]
+												: "bg-sky-200",
+										)}
+									/>
+									<span className="truncate pl-6 font-medium capitalize">{bookingType?.name ?? "Default Booking"}</span>
+								</div>
+							);
+						},
+					},
+					{
+						id: "dogsName",
+						header: "Dog",
+						cell: (row) => {
+							const dog = row.dog;
+							return (
+								<div className="flex select-none space-x-2">
+									<span className="truncate font-medium capitalize">
+										{dog?.givenName} {dog?.familyName}
+									</span>
+								</div>
+							);
+						},
+					},
+					{
+						id: "date",
+						header: "Date",
+						cell: (row) => {
+							const date = dayjs.tz(row.date);
+							const end = date.add(row.duration, "seconds");
+
+							return (
+								<div className="flex max-w-[500px] select-none items-center">
+									<span className="truncate">
+										{date.day() !== end.day() ? (
+											<>
+												{date.format("MMMM Do, YYYY")} - {end.format("MMMM Do, YYYY")}
+											</>
+										) : (
+											<>{date.format("MMMM Do, YYYY")}</>
+										)}
+									</span>
+								</div>
+							);
+						},
+					},
+					{
+						id: "time",
+						header: "Time",
+						cell: (row) => {
+							const date = dayjs.tz(row.date);
+							const end = date.add(row.duration, "seconds");
+
+							return (
+								<div className="flex max-w-[500px] select-none items-center">
+									<span className="truncate">
+										{date.format("h:mm")} {date.format("a") !== end.format("a") ? date.format("a") : ""} -{" "}
+										{end.format("h:mma")}
+									</span>
+								</div>
+							);
+						},
+					},
+					{
+						id: "actions",
+						header: "",
+						cell: (row) => (
+							<div className="flex justify-end">
+								<DropdownMenu>
+									<DropdownMenuTrigger asChild>
+										<Button variant="ghost" className="flex h-8 w-8 p-0 data-[state=open]:bg-muted">
+											<EllipsisVerticalIcon className="h-4 w-4" />
+											<span className="sr-only">Open menu</span>
+										</Button>
+									</DropdownMenuTrigger>
+									<DropdownMenuContent align="end" className="w-[160px]">
+										<DropdownMenuLabel>Actions</DropdownMenuLabel>
+										<DropdownMenuSeparator />
+										<DropdownMenuItem asChild>
+											<Link href={`/bookings/${row.id}`} className="hover:cursor-pointer">
+												<EditIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+												Edit
+											</Link>
+										</DropdownMenuItem>
+
+										<DropdownMenuItem
+											onClick={(e) => {
+												e.preventDefault();
+												e.stopPropagation();
+
+												setConfirmBookingDelete(row);
+											}}
+										>
+											<TrashIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+											Delete
+										</DropdownMenuItem>
+									</DropdownMenuContent>
+								</DropdownMenu>
+							</div>
+						),
+					},
+				]}
 			/>
 		</>
 	);
