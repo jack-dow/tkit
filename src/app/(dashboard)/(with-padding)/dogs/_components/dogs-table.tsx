@@ -28,7 +28,7 @@ function DogsTable({ initialData }: { initialData: RouterOutputs["app"]["dogs"][
 	const searchParams = useSearchParams();
 	const validatedSearchParams = PaginationOptionsSchema.parse(searchParamsToObject(searchParams));
 
-	const context = api.useContext();
+	const utils = api.useUtils();
 
 	const result = api.app.dogs.all.useQuery(validatedSearchParams, { initialData });
 
@@ -71,7 +71,7 @@ function DogsTable({ initialData }: { initialData: RouterOutputs["app"]["dogs"][
 			<DataTable
 				search={{
 					onSearch: async (searchTerm) => {
-						const result = await context.app.dogs.search.fetch({ searchTerm });
+						const result = await utils.app.dogs.search.fetch({ searchTerm });
 
 						return result.data;
 					},

@@ -86,12 +86,12 @@ export function UpdateTimezoneDialog({ timezoneDialogCookie }: { timezoneDialogC
 
 				<DialogFooter>
 					<Button
-						disabled={updateUserMutation.isLoading}
+						disabled={updateUserMutation.isPending}
 						onClick={() => {
 							updateUserMutation.mutate({ timezone: localTimezone });
 						}}
 					>
-						{updateUserMutation.isLoading && <Loader size="sm" />}
+						{updateUserMutation.isPending && <Loader size="sm" />}
 						Update Timezone
 					</Button>
 				</DialogFooter>

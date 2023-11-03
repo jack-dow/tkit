@@ -28,7 +28,7 @@ function ClientsTable({ initialData }: { initialData: RouterOutputs["app"]["clie
 	const searchParams = useSearchParams();
 	const validatedSearchParams = PaginationOptionsSchema.parse(searchParamsToObject(searchParams));
 
-	const context = api.useContext();
+	const utils = api.useUtils();
 
 	const result = api.app.clients.all.useQuery(validatedSearchParams, { initialData });
 
@@ -74,7 +74,7 @@ function ClientsTable({ initialData }: { initialData: RouterOutputs["app"]["clie
 			<DataTable
 				search={{
 					onSearch: async (searchTerm) => {
-						const result = await context.app.clients.search.fetch({ searchTerm });
+						const result = await utils.app.clients.search.fetch({ searchTerm });
 
 						return result.data;
 					},

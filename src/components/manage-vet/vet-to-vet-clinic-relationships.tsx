@@ -60,7 +60,7 @@ function VetToVetClinicRelationships({ isNew, variant }: { isNew: boolean; varia
 
 	const searchVetClinicsInputRef = React.useRef<HTMLInputElement>(null);
 
-	const context = api.useContext();
+	const utils = api.useUtils();
 
 	const insertVetToVetClinicRelationshipMutation = api.app.vets.vetToVetClinicRelationships.insert.useMutation();
 	const deleteVetToVetClinicRelationshipMutation = api.app.vets.vetToVetClinicRelationships.delete.useMutation();
@@ -186,7 +186,7 @@ function VetToVetClinicRelationships({ isNew, variant }: { isNew: boolean; varia
 								: `${vetToVetClinicRelationships.fields.length} vets clinics selected`
 						}
 						onSearch={async (searchTerm) => {
-							const res = await context.app.vetClinics.search.fetch({ searchTerm });
+							const res = await utils.app.vetClinics.search.fetch({ searchTerm });
 
 							return res.data ?? [];
 						}}
@@ -304,7 +304,7 @@ function VetToVetClinicRelationship({
 
 	const previousRelationship = React.useRef(vetToVetClinicRelationship.relationship);
 
-	const context = api.useContext();
+	const utils = api.useUtils();
 
 	const updateVetToVetClinicRelationshipMutation = api.app.vets.vetToVetClinicRelationships.update.useMutation();
 
@@ -454,7 +454,7 @@ function VetToVetClinicRelationship({
 
 									setIsFetchingVetClinic(true);
 
-									context.app.vetClinics.byId
+									utils.app.vetClinics.byId
 										.fetch({ id: vetToVetClinicRelationship.vetClinic.id })
 										.then((result) => {
 											if (!result.data) {

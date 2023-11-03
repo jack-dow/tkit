@@ -64,7 +64,7 @@ function DogToClientRelationships({ isNew }: { isNew: boolean }) {
 
 	const searchClientsInputRef = React.useRef<HTMLInputElement>(null);
 
-	const context = api.useContext();
+	const utils = api.useUtils();
 
 	const insertDogToClientRelationshipMutation = api.app.dogs.dogToClientRelationships.insert.useMutation();
 	const deleteDogToClientRelationshipMutation = api.app.dogs.dogToClientRelationships.delete.useMutation();
@@ -198,7 +198,7 @@ function DogToClientRelationships({ isNew }: { isNew: boolean }) {
 								: `${dogToClientRelationships.fields.length} clients selected`
 						}
 						onSearch={async (searchTerm) => {
-							const res = await context.app.clients.search.fetch({ searchTerm });
+							const res = await utils.app.clients.search.fetch({ searchTerm });
 
 							return res.data ?? [];
 						}}
@@ -303,7 +303,7 @@ function DogToClientRelationship({
 
 	const previousRelationship = React.useRef(dogToClientRelationship.relationship);
 
-	const context = api.useContext();
+	const utils = api.useUtils();
 
 	const updateDogToClientRelationshipMutation = api.app.dogs.dogToClientRelationships.update.useMutation();
 
@@ -442,7 +442,7 @@ function DogToClientRelationship({
 
 									setIsFetchingClient(true);
 
-									context.app.clients.byId
+									utils.app.clients.byId
 										.fetch({ id: dogToClientRelationship.client.id })
 										.then((result) => {
 											if (!result.data) {

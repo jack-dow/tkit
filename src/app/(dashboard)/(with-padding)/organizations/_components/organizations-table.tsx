@@ -28,7 +28,7 @@ function OrganizationsTable({ initialData }: { initialData: RouterOutputs["auth"
 	const searchParams = useSearchParams();
 	const validatedSearchParams = PaginationOptionsSchema.parse(searchParamsToObject(searchParams));
 
-	const context = api.useContext();
+	const utils = api.useUtils();
 
 	const result = api.auth.organizations.all.useQuery(validatedSearchParams, { initialData });
 
@@ -71,7 +71,7 @@ function OrganizationsTable({ initialData }: { initialData: RouterOutputs["auth"
 			<DataTable
 				search={{
 					onSearch: async (searchTerm) => {
-						const result = await context.auth.organizations.search.fetch({ searchTerm });
+						const result = await utils.auth.organizations.search.fetch({ searchTerm });
 
 						return result.data;
 					},

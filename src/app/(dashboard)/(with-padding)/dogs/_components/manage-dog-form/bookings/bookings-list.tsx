@@ -76,7 +76,7 @@ function BookingsList({
 	const { toast } = useToast();
 	const form = useFormContext<ManageDogFormSchema>();
 
-	const context = api.useContext();
+	const utils = api.useUtils();
 	const bookingDeleteMutation = api.app.bookings.delete.useMutation();
 
 	const user = useUser();
@@ -309,7 +309,7 @@ function BookingsList({
 										.pop()!;
 								}
 
-								context.app.bookings.search
+								utils.app.bookings.search
 									.fetch({
 										dogId: form.getValues("id"),
 										cursor,

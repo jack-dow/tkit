@@ -28,7 +28,7 @@ function VetsTable({ initialData }: { initialData: RouterOutputs["app"]["vets"][
 	const searchParams = useSearchParams();
 	const validatedSearchParams = PaginationOptionsSchema.parse(searchParamsToObject(searchParams));
 
-	const context = api.useContext();
+	const utils = api.useUtils();
 
 	const result = api.app.vets.all.useQuery(validatedSearchParams, {
 		initialData: initialData,
@@ -77,7 +77,7 @@ function VetsTable({ initialData }: { initialData: RouterOutputs["app"]["vets"][
 			<DataTable
 				search={{
 					onSearch: async (searchTerm) => {
-						const result = await context.app.vets.search.fetch({ searchTerm });
+						const result = await utils.app.vets.search.fetch({ searchTerm });
 
 						return result.data;
 					},

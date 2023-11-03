@@ -62,7 +62,7 @@ function ManageOrganizationForm(props: ManageOrganizationFormProps) {
 	// Have to hold the file here because we need to upload as a File not a url and if you use a File in zod it errors when run on the server as File doesn't exist there
 	const [uploadedLogoImage, setUploadedLogoImage] = React.useState<File | null>(null);
 
-	const context = api.useContext();
+	const utils = api.useUtils();
 
 	const insertMutation = api.auth.organizations.insert.useMutation();
 	const updateMutation = api.auth.organizations.update.useMutation();
@@ -96,7 +96,7 @@ function ManageOrganizationForm(props: ManageOrganizationFormProps) {
 				if (data.logoImageUrl !== organization?.logoImageUrl) {
 					if (uploadedLogoImage) {
 						try {
-							const { data: url } = await context.auth.user.organization.getLogoImageUrl.fetch({
+							const { data: url } = await utils.auth.user.organization.getLogoImageUrl.fetch({
 								fileType: uploadedLogoImage.type,
 							});
 

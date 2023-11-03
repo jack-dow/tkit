@@ -59,7 +59,7 @@ function ClientToDogRelationships({
 
 	const FieldsWrapper = variant === "sheet" ? FormSheetGroup : FormGroup;
 
-	const context = api.useContext();
+	const utils = api.useUtils();
 
 	const insertDogToClientRelationshipMutation = api.app.dogs.dogToClientRelationships.insert.useMutation();
 	const deleteDogToClientRelationshipMutation = api.app.dogs.dogToClientRelationships.delete.useMutation();
@@ -127,7 +127,7 @@ function ClientToDogRelationships({
 								: `${dogToClientRelationships.fields.length} dogs selected`
 						}
 						onSearch={async (searchTerm) => {
-							const res = await context.app.dogs.search.fetch({ searchTerm });
+							const res = await utils.app.dogs.search.fetch({ searchTerm });
 
 							return res.data ?? [];
 						}}

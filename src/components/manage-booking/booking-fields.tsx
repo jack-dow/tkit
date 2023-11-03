@@ -74,7 +74,7 @@ function BookingFields({
 	const user = useUser();
 	const form = useFormContext<ManageBookingFormSchema>();
 
-	const context = api.useContext();
+	const utils = api.useUtils();
 
 	const [dateInputValue, setDateInputValue] = React.useState("");
 	const [isDatePickerOpen, setIsDatePickerOpen] = React.useState(false);
@@ -394,7 +394,7 @@ function BookingFields({
 										disabled={disableDogSearch}
 										placeholder={disableDogSearch ? "" : "Select dog"}
 										onSearch={async (searchTerm) => {
-											const result = await context.app.dogs.search.fetch({ searchTerm });
+											const result = await utils.app.dogs.search.fetch({ searchTerm });
 
 											return result.data;
 										}}
@@ -437,7 +437,7 @@ function BookingFields({
 									<SearchCombobox
 										placeholder="Select user"
 										onSearch={async (searchTerm) => {
-											const result = await context.auth.organizations.users.search.fetch({ searchTerm });
+											const result = await utils.auth.organizations.users.search.fetch({ searchTerm });
 
 											return result.data;
 										}}

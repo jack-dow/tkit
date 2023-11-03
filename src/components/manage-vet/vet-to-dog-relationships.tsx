@@ -59,7 +59,7 @@ function VetToDogRelationships({
 
 	const FieldsWrapper = variant === "sheet" ? FormSheetGroup : FormGroup;
 
-	const context = api.useContext();
+	const utils = api.useUtils();
 
 	const insertDogToVetRelationshipMutation = api.app.dogs.dogToVetRelationships.insert.useMutation();
 	const deleteDogToVetRelationshipMutation = api.app.dogs.dogToVetRelationships.delete.useMutation();
@@ -124,7 +124,7 @@ function VetToDogRelationships({
 								: `${dogToVetRelationships.fields.length} dogs selected`
 						}
 						onSearch={async (searchTerm) => {
-							const res = await context.app.dogs.search.fetch({ searchTerm });
+							const res = await utils.app.dogs.search.fetch({ searchTerm });
 
 							return res.data ?? [];
 						}}

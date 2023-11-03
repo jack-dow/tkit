@@ -26,6 +26,7 @@ import { useToast } from "~/components/ui/use-toast";
 import { useUser } from "~/app/providers";
 import { useDayjs, type Dayjs, type DayjsDate } from "~/hooks/use-dayjs";
 import { useDidUpdate } from "~/hooks/use-did-update";
+import { useViewportSize } from "~/hooks/use-viewport-size";
 import { api } from "~/lib/trpc/client";
 import { cn, secondsToHumanReadable, setSearchParams } from "~/lib/utils";
 import { type RouterOutputs } from "~/server";
@@ -177,6 +178,8 @@ function WeekView({
 
 	const [isPreviewCardOpen, setIsPreviewCardOpen] = React.useState(false);
 
+	const viewportSize = useViewportSize();
+
 	React.useEffect(() => {
 		// Set the container scroll position based on the current time.
 		const currentMinute = new Date().getHours() * 60;
@@ -258,16 +261,18 @@ function WeekView({
 					<Separator orientation="vertical" className="hidden h-6 sm:block" />
 
 					<Popover>
-						<PopoverTrigger asChild>
-							<Button size="icon" variant="outline">
-								<span className="sr-only">Open day select calendar</span>
-								<CalendarDaysIcon className="h-5 w-5" aria-hidden="true" />
-							</Button>
-						</PopoverTrigger>
+						<div className="w-9">
+							<PopoverTrigger asChild>
+								<Button size="icon" variant="outline">
+									<span className="sr-only">Open day select calendar</span>
+									<CalendarDaysIcon className="h-5 w-5" aria-hidden="true" />
+								</Button>
+							</PopoverTrigger>
+						</div>
 						<PopoverContent className="w-auto p-0" align="center">
 							<Calendar
 								mode="single"
-								selected={startDate.toDate()}
+								selected={new Date(startDate.format("YYYY-MM-DD"))}
 								onSelect={(value) => {
 									setIsLoading(true);
 									router.push(
@@ -551,7 +556,11 @@ function WeekView({
 
 									const halfHourHeight = Math.ceil((rect.height - 32) / 48);
 
-									const day = Math.floor(offsetX / ((rect.width - 32) / 7));
+									// On screens under size sm (640px) the calendar only shows one day at a time
+									const day =
+										viewportSize.width < 640
+											? visibleDate - startDate.date()
+											: Math.floor(offsetX / ((rect.width - 32) / 7));
 									const halfHourClicked = Math.floor(offsetY / halfHourHeight);
 									const date = startDate
 										.startOf("day")

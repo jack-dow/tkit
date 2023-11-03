@@ -14,9 +14,19 @@ const withBundleAnalyzer = bundleAnalyzer({
 const config = {
 	reactStrictMode: true,
 	images: {
-		domains: [
-			"dogworx-management-dev.s3.ap-southeast-2.amazonaws.com",
-			"dogworx-management.s3.ap-southeast-2.amazonaws.com",
+		remotePatterns: [
+			{
+				protocol: "https",
+				hostname: "dogworx-management-dev.s3.ap-southeast-2.amazonaws.com",
+				port: "",
+				pathname: "/**/*",
+			},
+			{
+				protocol: "https",
+				hostname: "dogworx-management.s3.ap-southeast-2.amazonaws.com",
+				port: "",
+				pathname: "/**/*",
+			},
 		],
 	},
 	// SEE: https://github.com/aws/aws-sdk-js-v3/issues/5216

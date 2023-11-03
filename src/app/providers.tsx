@@ -5,7 +5,7 @@
 // -----------------------------------------------------------------------------
 import * as React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+// import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ReactQueryStreamedHydration } from "@tanstack/react-query-next-experimental";
 import { httpBatchLink, loggerLink, splitLink, unstable_httpBatchStreamLink } from "@trpc/client";
 import superjson from "superjson";
@@ -80,7 +80,7 @@ export function TRPCReactProvider(props: { children: React.ReactNode; headers: H
 		<api.Provider client={trpcClient} queryClient={queryClient}>
 			<QueryClientProvider client={queryClient}>
 				<ReactQueryStreamedHydration transformer={superjson}>{props.children}</ReactQueryStreamedHydration>
-				<ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
+				{/* <ReactQueryDevtools initialIsOpen={false} position="bottom-right" /> */}
 			</QueryClientProvider>
 		</api.Provider>
 	);

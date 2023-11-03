@@ -44,9 +44,7 @@ const MagicLinkEmail = ({ code = "123456", token, requestedFromIp, requestedFrom
 							<Row>
 								<Column align="left">
 									<Button
-										pX={16}
-										pY={17.6}
-										className="rounded-md bg-[#0f172a] text-center text-[14px] font-medium text-[#f8fafc] no-underline"
+										className="rounded-md bg-[#0f172a] px-4 py-[17.6px] text-center text-[14px] font-medium text-[#f8fafc] no-underline"
 										href={baseUrl + "/api/auth/sign-in/magic-link?token=" + token}
 									>
 										Login to TKIT
@@ -69,7 +67,7 @@ const MagicLinkEmail = ({ code = "123456", token, requestedFromIp, requestedFrom
 							</Row>
 						</Section>
 						<Hr className="mx-0 my-[20px] w-full border border-solid border-[#eaeaea]" />
-						<Text className="mb-0 mt-2 text-[14px] font-medium">Didn't request this login?</Text>
+						<Text className="mb-0 mt-2 text-[14px] font-medium">Didn&apos;t request this login?</Text>
 						<Text className="mt-0 text-[12px] text-[#666666]">
 							{requestedFromIp && requestedFromLocation && (
 								<>
@@ -78,7 +76,7 @@ const MagicLinkEmail = ({ code = "123456", token, requestedFromIp, requestedFrom
 								</>
 							)}
 							If you were not expecting this request, you can safely ignore this email. If you are concerned about your
-							account's safety, please reply to this email to get in touch with us.
+							account&apos;s safety, please reply to this email to get in touch with us.
 						</Text>
 					</Container>
 				</Body>

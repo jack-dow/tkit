@@ -168,7 +168,7 @@ function ManageOrganizationUserDialogForm({
 	const isFormDirty = hasTrueValue(form.formState.dirtyFields);
 	useConfirmPageNavigation(isFormDirty);
 
-	const context = api.useContext();
+	const utils = api.useUtils();
 
 	const insertMutation = api.auth.organizations.users.insert.useMutation();
 	const updateMutation = api.auth.organizations.users.update.useMutation();
@@ -219,7 +219,7 @@ function ManageOrganizationUserDialogForm({
 			if ((data.profileImageUrl && !organizationUser) || data.profileImageUrl !== organizationUser?.profileImageUrl) {
 				if (uploadedProfileImage) {
 					try {
-						const { data: url } = await context.auth.organizations.users.getProfileImageUrl.fetch({
+						const { data: url } = await utils.auth.organizations.users.getProfileImageUrl.fetch({
 							id: data.id,
 							fileType: uploadedProfileImage.type,
 						});

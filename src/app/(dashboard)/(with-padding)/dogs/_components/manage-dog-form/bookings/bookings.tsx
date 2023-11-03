@@ -26,7 +26,7 @@ function Bookings({
 	const { dayjs } = useDayjs();
 	const { toast } = useToast();
 
-	const context = api.useContext();
+	const utils = api.useUtils();
 
 	const form = useFormContext<ManageDogFormSchema>();
 
@@ -54,7 +54,7 @@ function Bookings({
 						onValueChange={(value) => {
 							if (!isNew && value === "future" && !hasFetchedInitialFutureSessions) {
 								setIsLoadingInitialFutureSessions(true);
-								context.app.bookings.search
+								utils.app.bookings.search
 									.fetch({
 										dogId: form.getValues("id"),
 										after: dayjs.tz().toDate(),

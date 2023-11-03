@@ -34,9 +34,10 @@ interface CreateContextOptions {
 
 /**
  * This helper generates the "internals" for a tRPC context. If you need to use
- * it, you can export it from here
+ * it, you can export it from here.
+ * This is useful for testing when we don't want to mock Next.js' request/response
  */
-const createInnerTRPCContext = (opts: CreateContextOptions) => {
+export const createInnerTRPCContext = (opts: CreateContextOptions) => {
 	return {
 		session: opts.session,
 		user: opts.user,

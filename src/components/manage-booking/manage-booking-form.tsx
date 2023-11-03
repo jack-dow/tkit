@@ -44,7 +44,7 @@ function ManageBookingForm({ booking, onSubmit, bookingTypes, onSuccessfulSubmit
 	const [isConfirmOverlappingBookingDialogOpen, setIsConfirmOverlappingBookingDialogOpen] = React.useState(false);
 	const [isCheckingForOverlappingBookings, setIsCheckingForOverlappingBookings] = React.useState(false);
 
-	const context = api.useContext();
+	const utils = api.useUtils();
 
 	return (
 		<>
@@ -75,7 +75,7 @@ function ManageBookingForm({ booking, onSubmit, bookingTypes, onSuccessfulSubmit
 
 						setIsCheckingForOverlappingBookings(true);
 
-						context.app.bookings.checkForOverlaps
+						utils.app.bookings.checkForOverlaps
 							.fetch({
 								bookingId: form.getValues("id"),
 								assignedToId: form.getValues("assignedToId"),

@@ -2,7 +2,7 @@
 import { cookies, headers } from "next/headers";
 // import { renderAsync } from "@react-email/components";
 import { TRPCError } from "@trpc/server";
-// import cryptoRandomString from "crypto-random-string";
+// import {generateRandomString} from "~/lib/generate-random-string";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
@@ -73,8 +73,8 @@ export const signInRouter = createTRPCRouter({
 			// 		message: "User not found",
 			// 	});
 			// }
-			// const code = cryptoRandomString({ length: 6, type: "numeric" });
-			// const token = cryptoRandomString({ length: 64, type: "url-safe" });
+			// const code = generateRandomString({ length: 6, type: "numeric" });
+			// const token = generateRandomString({ length: 64, type: "url-safe" });
 			// await ctx.db.insert(schema.verificationCodes).values({
 			// 	id: generateId(),
 			// 	emailAddress: user.emailAddress,
@@ -153,6 +153,7 @@ export const signInRouter = createTRPCRouter({
 				userAgent: headersList.get("user-agent"),
 				city: ctx.request.geo?.city,
 				country: ctx.request.geo?.country,
+				lastActiveAt: new Date(),
 			});
 
 			cookies().set({
@@ -254,6 +255,7 @@ export const signInRouter = createTRPCRouter({
 					expiresAt: new Date(Date.now() + sessionCookieOptions.maxAge),
 					ipAddress: ipAddress && ipAddress.length > 15 ? undefined : ipAddress,
 					userAgent: ctx.request.headers.get("user-agent"),
+					lastActiveAt: new Date(),
 				});
 
 				cookies().set({

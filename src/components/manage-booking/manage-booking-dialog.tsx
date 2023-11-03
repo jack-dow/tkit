@@ -145,7 +145,7 @@ function ManageBookingDialogForm({
 		setIsDirty(form.formState.isDirty);
 	}, [form.formState.isDirty, setIsDirty]);
 
-	const context = api.useContext();
+	const utils = api.useUtils();
 
 	return (
 		<>
@@ -166,7 +166,7 @@ function ManageBookingDialogForm({
 
 						setIsCheckingForOverlappingBookings(true);
 
-						context.app.bookings.checkForOverlaps
+						utils.app.bookings.checkForOverlaps
 							.fetch({
 								bookingId: form.getValues("id"),
 								assignedToId: form.getValues("assignedToId"),

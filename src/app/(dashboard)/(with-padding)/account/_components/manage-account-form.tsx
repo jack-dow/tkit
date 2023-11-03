@@ -52,7 +52,7 @@ function ManageAccountForm({ initialSessions }: { initialSessions: RouterOutputs
 
 	const [isDeletingAccount, setIsDeletingAccount] = React.useState(false);
 
-	const context = api.useContext();
+	const utils = api.useUtils();
 
 	const accountUpdateMutation = api.auth.user.update.useMutation({});
 	const accountDeleteMutation = api.auth.user.delete.useMutation({});
@@ -66,7 +66,7 @@ function ManageAccountForm({ initialSessions }: { initialSessions: RouterOutputs
 			if (data.profileImageUrl !== user.profileImageUrl) {
 				if (uploadedProfileImage) {
 					try {
-						const { data: url } = await context.auth.user.getProfileImageUrl.fetch({
+						const { data: url } = await utils.auth.user.getProfileImageUrl.fetch({
 							fileType: uploadedProfileImage.type,
 						});
 

@@ -61,7 +61,7 @@ function VetClinicToVetRelationships({ isNew, variant }: { isNew: boolean; varia
 
 	const searchVetsInputRef = React.useRef<HTMLInputElement>(null);
 
-	const context = api.useContext();
+	const utils = api.useUtils();
 
 	const insertVetToVetClinicRelationshipMutation = api.app.vetClinics.vetToVetClinicRelationships.insert.useMutation();
 	const deleteVetToVetClinicRelationshipMutation = api.app.vetClinics.vetToVetClinicRelationships.delete.useMutation();
@@ -198,7 +198,7 @@ function VetClinicToVetRelationships({ isNew, variant }: { isNew: boolean; varia
 								: `${vetToVetClinicRelationships.fields.length} vets selected`
 						}
 						onSearch={async (searchTerm) => {
-							const res = await context.app.vets.search.fetch({ searchTerm });
+							const res = await utils.app.vets.search.fetch({ searchTerm });
 
 							return res.data ?? [];
 						}}
@@ -310,7 +310,7 @@ function VetClinicToVetRelationship({
 
 	const previousRelationship = React.useRef(vetToVetClinicRelationship.relationship);
 
-	const context = api.useContext();
+	const utils = api.useUtils();
 
 	const updateVetToVetClinicRelationshipMutation = api.app.vetClinics.vetToVetClinicRelationships.update.useMutation();
 
@@ -467,7 +467,7 @@ function VetClinicToVetRelationship({
 
 									setIsFetchingVet(true);
 
-									context.app.vets.byId
+									utils.app.vets.byId
 										.fetch({ id: vetToVetClinicRelationship.vet.id })
 										.then((result) => {
 											if (!result.data) {

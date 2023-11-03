@@ -36,7 +36,7 @@ function BookingTypesTable({ initialData }: { initialData: RouterOutputs["app"][
 	const searchParams = useSearchParams();
 	const validatedSearchParams = PaginationOptionsSchema.parse(searchParamsToObject(searchParams));
 
-	const context = api.useContext();
+	const utils = api.useUtils();
 
 	const result = api.app.bookingTypes.all.useQuery(validatedSearchParams, { initialData });
 
@@ -80,7 +80,7 @@ function BookingTypesTable({ initialData }: { initialData: RouterOutputs["app"][
 				basePath="/settings"
 				search={{
 					onSearch: async (searchTerm) => {
-						const result = await context.app.bookingTypes.search.fetch({ searchTerm });
+						const result = await utils.app.bookingTypes.search.fetch({ searchTerm });
 
 						return result.data;
 					},

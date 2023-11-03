@@ -87,7 +87,7 @@ export type SearchParams = { [key: string]: string | string[] | undefined };
 
 export function setSearchParams<
 	NewParams extends Record<string, string | number | undefined> = Record<string, string | number | undefined>,
->(currentParams: ReadonlyURLSearchParams, newParams: NewParams) {
+>(currentParams: ReadonlyURLSearchParams | URLSearchParams, newParams: NewParams) {
 	const searchParams = new URLSearchParams(currentParams);
 
 	Object.entries(newParams).forEach(([key, value]) => {

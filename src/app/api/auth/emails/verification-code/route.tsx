@@ -1,6 +1,5 @@
 import { env } from "process";
 import { NextResponse, type NextRequest } from "next/server";
-import cryptoRandomString from "crypto-random-string";
 import { VerificationCodeEmail } from "emails/verification-code-email";
 import { Resend } from "resend";
 import { z } from "zod";
@@ -8,6 +7,7 @@ import { z } from "zod";
 import { type APIResponse } from "~/app/api/_utils";
 import { drizzle } from "~/db/drizzle";
 import { verificationCodes } from "~/db/schema/auth";
+import { generateRandomString } from "~/lib/generate-random-string";
 import { generateId } from "~/lib/utils";
 import { verifyAPISession } from "../../../_utils";
 
@@ -54,7 +54,7 @@ async function POST(request: NextRequest): Promise<NextResponse<SendVerification
 
 		const { emailAddress } = validation.data;
 
-		const code = cryptoRandomString({ length: 6, type: "numeric" });
+		const code = generateRandomString({ length: 6, type: "numeric" });
 
 		await drizzle.insert(verificationCodes).values({
 			id: generateId(),
@@ -63,7 +63,7 @@ async function POST(request: NextRequest): Promise<NextResponse<SendVerification
 			expiresAt: new Date(Date.now() + 300000),
 		});
 
-		await resend.sendEmail({
+		await resend.emails.send({
 			from: "TKIT <accounts@dogworx.com.au>",
 			to: emailAddress,
 			subject: `${code} is your verification code`,

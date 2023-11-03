@@ -64,7 +64,7 @@ function DogToVetRelationships({ isNew }: { isNew: boolean }) {
 
 	const searchVetsInputRef = React.useRef<HTMLInputElement>(null);
 
-	const context = api.useContext();
+	const utils = api.useUtils();
 
 	const insertDogToVetRelationshipMutation = api.app.dogs.dogToVetRelationships.insert.useMutation();
 	const deleteDogToVetRelationshipMutation = api.app.dogs.dogToVetRelationships.delete.useMutation();
@@ -197,7 +197,7 @@ function DogToVetRelationships({ isNew }: { isNew: boolean }) {
 								: `${dogToVetRelationships.fields.length} vets selected`
 						}
 						onSearch={async (searchTerm) => {
-							const res = await context.app.vets.search.fetch({ searchTerm });
+							const res = await utils.app.vets.search.fetch({ searchTerm });
 
 							return res.data ?? [];
 						}}
@@ -300,7 +300,7 @@ function DogToVetRelationship({
 
 	const previousRelationship = React.useRef(dogToVetRelationship.relationship);
 
-	const context = api.useContext();
+	const utils = api.useUtils();
 
 	const updateDogToVetRelationshipMutation = api.app.dogs.dogToVetRelationships.update.useMutation();
 
@@ -434,7 +434,7 @@ function DogToVetRelationship({
 
 									setIsFetchingVet(true);
 
-									context.app.vets.byId
+									utils.app.vets.byId
 										.fetch({ id: dogToVetRelationship.vet.id })
 										.then((result) => {
 											if (!result.data) {

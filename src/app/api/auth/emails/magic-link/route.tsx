@@ -1,6 +1,5 @@
 import { env } from "process";
 import { NextResponse, type NextRequest } from "next/server";
-import cryptoRandomString from "crypto-random-string";
 import { MagicLinkEmail } from "emails/magic-link-email";
 import { Resend } from "resend";
 import { z } from "zod";
@@ -8,6 +7,7 @@ import { z } from "zod";
 import { type APIResponse } from "~/app/api/_utils";
 import { drizzle } from "~/db/drizzle";
 import { verificationCodes } from "~/db/schema/auth";
+import { generateRandomString } from "~/lib/generate-random-string";
 import { generateId } from "~/lib/utils";
 
 const SendMagicLinkBodySchema = z.object({
@@ -59,8 +59,8 @@ async function POST(request: NextRequest): Promise<NextResponse<SendMagicLinkPOS
 			);
 		}
 
-		const code = cryptoRandomString({ length: 6, type: "numeric" });
-		const token = cryptoRandomString({ length: 64, type: "url-safe" });
+		const code = generateRandomString({ length: 6, type: "numeric" });
+		const token = generateRandomString({ length: 64, type: "url-safe" });
 
 		await drizzle.insert(verificationCodes).values({
 			id: generateId(),

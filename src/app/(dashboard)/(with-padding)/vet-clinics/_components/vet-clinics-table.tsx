@@ -28,7 +28,7 @@ function VetClinicsTable({ initialData }: { initialData: RouterOutputs["app"]["v
 	const searchParams = useSearchParams();
 	const validatedSearchParams = PaginationOptionsSchema.parse(searchParamsToObject(searchParams));
 
-	const context = api.useContext();
+	const utils = api.useUtils();
 
 	const result = api.app.vetClinics.all.useQuery(validatedSearchParams, {
 		initialData: initialData,
@@ -74,7 +74,7 @@ function VetClinicsTable({ initialData }: { initialData: RouterOutputs["app"]["v
 			<DataTable
 				search={{
 					onSearch: async (searchTerm) => {
-						const result = await context.app.vetClinics.search.fetch({ searchTerm });
+						const result = await utils.app.vetClinics.search.fetch({ searchTerm });
 
 						return result.data;
 					},
