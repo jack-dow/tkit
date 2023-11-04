@@ -31,18 +31,18 @@ function SignInForm() {
 	const reference = searchParams.get("ref");
 
 	async function onSubmit(data: SignInSchema) {
-		// if (
-		// 	process.env.NODE_ENV === "development" ||
-		// 	data.emailAddress.toLowerCase() === "test@tkit.app" ||
-		// 	data.emailAddress.toLowerCase() === "test@dogworx.com.au"
-		// ) {
-		// 	router.push(
-		// 		`/verification-code?emailAddress=${encodeURIComponent(data.emailAddress)}${
-		// 			from ? `&from=${encodeURIComponent(from)}` : ""
-		// 		}`,
-		// 	);
-		// 	return;
-		// }
+		if (
+			process.env.NODE_ENV === "development" ||
+			data.emailAddress.toLowerCase() === "test@tkit.app" ||
+			data.emailAddress.toLowerCase() === "test@dogworx.com.au"
+		) {
+			router.push(
+				`/verification-code?emailAddress=${encodeURIComponent(data.emailAddress)}${
+					from ? `&from=${encodeURIComponent(from)}` : ""
+				}`,
+			);
+			return;
+		}
 
 		try {
 			await sendMagicLinkMutation.mutateAsync({ emailAddress: data.emailAddress });

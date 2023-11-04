@@ -40,8 +40,8 @@ type ColumnDef<TValue> = Array<{
 	cell: (value: TValue) => string | React.ReactNode;
 	meta?: {
 		classNames?: {
-			header?: string
-		}
+			header?: string;
+		};
 	};
 }>;
 
@@ -303,7 +303,11 @@ function DataTablePagination({ page, maxPage, limit, setIsLoading }: DataTablePa
 											page: newPage,
 											limit: pageSize,
 										}).toString()}`}
-										onClick={() => setIsLoading(true)}
+										onClick={() => {
+											if (pageSize !== limit) {
+												setIsLoading(true);
+											}
+										}}
 										className="hover:cursor-pointer"
 									>
 										<span className="absolute right-2 flex h-3.5 w-3.5 items-center justify-center">

@@ -5,12 +5,14 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { ItemIndicator } from "@radix-ui/react-select";
 
 import { type BOOKING_TYPES_COLORS } from "~/components/manage-booking-types/booking-types-fields";
 import { Button } from "~/components/ui/button";
 import { Calendar } from "~/components/ui/calendar";
 import {
 	CalendarDaysIcon,
+	CheckIcon,
 	ChevronLeftIcon,
 	ChevronRightIcon,
 	DogIcon,
@@ -146,7 +148,7 @@ function WeekView({
 		initialData: _organization,
 	});
 
-	const assignedToId = searchParams.get("assignedTo") ?? user.id;
+	const assignedToId = searchParams.get("assignedToId") ?? user.id;
 	const assignedTo = organization.organizationUsers.find((u) => u.id === assignedToId) ?? null;
 
 	const {
@@ -176,7 +178,7 @@ function WeekView({
 
 	const [isLoading, setIsLoading] = React.useState(false);
 
-	const [isPreviewCardOpen, setIsPreviewCardOpen] = React.useState(false);
+	const [canManageBookingDialogOpen, setCanManageBookingDialogOpen] = React.useState(false);
 
 	const viewportSize = useViewportSize();
 
@@ -332,7 +334,7 @@ function WeekView({
 
 					<Separator orientation="vertical" className="h-6" />
 
-					<Select value={assignedToId}>
+					<Select defaultValue={assignedToId}>
 						<SelectTrigger className="flex h-8 w-auto gap-1 space-x-0 bg-white text-xs">
 							<span className="hidden md:inline">
 								{assignedTo ? (
@@ -349,38 +351,46 @@ function WeekView({
 						</SelectTrigger>
 						<SelectContent className="pointer-events-none w-44" align="start">
 							<SelectGroup className={cn("space-y-2")}>
-								{organization.organizationUsers.map((user) => (
-									<SelectItem
-										key={user.id}
-										value={user.id}
-										onClick={() => {
-											if (user.id !== assignedToId) {
-												setIsLoading(true);
-												router.push(`/calendar?${setSearchParams(searchParams, { assignedTo: user.id }).toString()}`);
-											}
-										}}
-									>
-										<div className="flex items-center gap-2">
-											<div className="flex h-6 w-6 shrink-0 items-center justify-center overflow-hidden rounded-full bg-zinc-100 text-[10px]">
-												{user.profileImageUrl ? (
-													<Image
-														src={user.profileImageUrl}
-														alt="User's profile image"
-														width={128}
-														height={128}
-														className="aspect-square rounded-full object-cover"
-													/>
-												) : (
-													<>
-														{user.givenName[0]}
-														{user.familyName?.[0]}
-													</>
-												)}
-											</div>
-											<span className="truncate">
-												{user.givenName} {user.familyName}
+								{organization.organizationUsers.map((organizationUser) => (
+									<SelectItem key={organizationUser.id} value={organizationUser.id} asChild>
+										<Link
+											href={`/calendar?${setSearchParams(searchParams, {
+												assignedToId: organizationUser.id,
+											}).toString()}`}
+											onClick={() => {
+												if (organizationUser.id !== assignedToId) {
+													setIsLoading(true);
+												}
+											}}
+											className="hover:cursor-pointer"
+										>
+											<span className="absolute right-2 flex h-3.5 w-3.5 items-center justify-center">
+												<ItemIndicator>
+													<CheckIcon className="h-4 w-4" />
+												</ItemIndicator>
 											</span>
-										</div>
+											<div className="flex items-center gap-2">
+												<div className="flex h-6 w-6 shrink-0 items-center justify-center overflow-hidden rounded-full bg-zinc-100 text-[10px]">
+													{organizationUser.profileImageUrl ? (
+														<Image
+															src={organizationUser.profileImageUrl}
+															alt="User's profile image"
+															width={128}
+															height={128}
+															className="aspect-square rounded-full object-cover"
+														/>
+													) : (
+														<>
+															{organizationUser.givenName[0]}
+															{organizationUser.familyName?.[0]}
+														</>
+													)}
+												</div>
+												<span className="truncate">
+													{organizationUser.givenName} {organizationUser.familyName}
+												</span>
+											</div>
+										</Link>
 									</SelectItem>
 								))}
 							</SelectGroup>
@@ -540,7 +550,7 @@ function WeekView({
 								style={{ gridTemplateRows: "1.75rem repeat(288, minmax(0, 0.5rem)) auto" }}
 								ref={calendarRef}
 								onClick={(event) => {
-									if (isPreviewCardOpen) {
+									if (!canManageBookingDialogOpen) {
 										return;
 									}
 
@@ -579,7 +589,7 @@ function WeekView({
 										)} / span ${1}`,
 									}}
 								>
-									<div className="absolute left-[-51.5px] z-30 text-right text-xs leading-5 text-gray-400">
+									<div className="absolute left-[-51.5px] z-10 text-right text-xs leading-5 text-gray-400">
 										{dayjs.tz().format("h:mmA")}
 									</div>
 									<Separator className=" h-full w-px bg-primary pl-[2px]" />
@@ -635,7 +645,7 @@ function WeekView({
 													setIsManageBookingDialogOpen(true);
 													setSelectedBooking(booking);
 												}}
-												setIsPreviewCardOpen={setIsPreviewCardOpen}
+												setCanManageBookingDialogOpen={setCanManageBookingDialogOpen}
 												trigger={
 													<button
 														className={cn(
@@ -709,10 +719,10 @@ type BookingPopoverProps = {
 	booking: BookingsByWeek[number];
 	trigger: React.ReactNode;
 	onEditClick: (booking: BookingsByWeek[number]) => void;
-	setIsPreviewCardOpen: React.Dispatch<React.SetStateAction<boolean>>;
+	setCanManageBookingDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-function BookingPopover({ booking, trigger, onEditClick, setIsPreviewCardOpen }: BookingPopoverProps) {
+function BookingPopover({ booking, trigger, onEditClick, setCanManageBookingDialogOpen }: BookingPopoverProps) {
 	const { dayjs } = useDayjs();
 
 	const bookingStart = dayjs.tz(booking.date);
@@ -722,11 +732,11 @@ function BookingPopover({ booking, trigger, onEditClick, setIsPreviewCardOpen }:
 			onOpenChange={(value) => {
 				if (value === false) {
 					setTimeout(() => {
-						setIsPreviewCardOpen(false);
+						setCanManageBookingDialogOpen(true);
 					}, 205);
 				}
 
-				setIsPreviewCardOpen(true);
+				setCanManageBookingDialogOpen(false);
 			}}
 		>
 			<PopoverTrigger asChild>{trigger}</PopoverTrigger>
