@@ -69,6 +69,42 @@ function DogToVetRelationships({ isNew }: { isNew: boolean }) {
 	const insertDogToVetRelationshipMutation = api.app.dogs.dogToVetRelationships.insert.useMutation();
 	const deleteDogToVetRelationshipMutation = api.app.dogs.dogToVetRelationships.delete.useMutation();
 
+	async function addDogToVetRelationship(vet:  ManageDogFormSchema["dogToVetRelationships"][number]["vet"]) {
+		const relationship = {
+			id: generateId(),
+			dogId: form.getValues("id"),
+			vetId: vet.id,
+			vet,
+			relationship: "primary",
+		} satisfies ManageDogFormSchema["dogToVetRelationships"][number];
+
+		if (!isNew) {
+			try {
+				await insertDogToVetRelationshipMutation.mutateAsync(relationship);
+
+				toast({
+					title: "Created relationship",
+					description: `Relationship between vet "${vet.givenName} ${vet.familyName}" and dog ${
+						form.getValues("givenName") ? `"${form.getValues("givenName")}"` : ""
+					} has been successfully created.`,
+				});
+			} catch (error) {
+				logInDevelopment(error);
+
+				toast({
+					title: "Failed to create relationship",
+					description: `Relationship between vet "${vet.givenName} ${vet.familyName}" and dog ${
+						form.getValues("givenName") ? `"${form.getValues("givenName")}"` : ""
+					} failed to create. Please try again.`,
+				});
+			}
+		}
+
+		form.setValue("dogToVetRelationships", [...dogToVetRelationships.fields, relationship], {
+			shouldDirty: false,
+		});
+	}
+
 	return (
 		<>
 			<ManageVetSheet
@@ -181,8 +217,15 @@ function DogToVetRelationships({ isNew }: { isNew: boolean }) {
 									: undefined
 								: undefined,
 					}}
-					onSuccessfulSubmit={() => {
+					onSuccessfulSubmit={(data) => {
 						searchVetsInputRef?.current?.focus();
+						void addDogToVetRelationship({
+							id: data.id,
+							givenName: data.givenName,
+							familyName: data.familyName ?? "",
+							emailAddress: data.emailAddress ?? "",
+							phoneNumber: data.phoneNumber ?? "",
+						});
 					}}
 				/>
 
@@ -211,39 +254,7 @@ function DogToVetRelationships({ isNew }: { isNew: boolean }) {
 								return;
 							}
 
-							const relationship = {
-								id: generateId(),
-								dogId: form.getValues("id"),
-								vetId: vet.id,
-								vet,
-								relationship: "primary",
-							} satisfies ManageDogFormSchema["dogToVetRelationships"][number];
-
-							if (!isNew) {
-								try {
-									await insertDogToVetRelationshipMutation.mutateAsync(relationship);
-
-									toast({
-										title: "Created relationship",
-										description: `Relationship between vet "${vet.givenName} ${vet.familyName}" and dog ${
-											form.getValues("givenName") ? `"${form.getValues("givenName")}"` : ""
-										} has been successfully created.`,
-									});
-								} catch (error) {
-									logInDevelopment(error);
-
-									toast({
-										title: "Failed to create relationship",
-										description: `Relationship between vet "${vet.givenName} ${vet.familyName}" and dog ${
-											form.getValues("givenName") ? `"${form.getValues("givenName")}"` : ""
-										} failed to create. Please try again.`,
-									});
-								}
-							}
-
-							form.setValue("dogToVetRelationships", [...dogToVetRelationships.fields, relationship], {
-								shouldDirty: false,
-							});
+							await addDogToVetRelationship(vet)
 						}}
 						renderActions={({ searchTerm }) => (
 							<MultiSelectSearchComboboxAction

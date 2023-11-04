@@ -67,6 +67,52 @@ function VetToVetClinicRelationships({ isNew, variant }: { isNew: boolean; varia
 
 	const FieldsWrapper = variant === "sheet" ? FormSheetGroup : FormGroup;
 
+	async function addVetToVetClinicRelationship(
+		vetClinic: ManageVetFormSchema["vetToVetClinicRelationships"][number]["vetClinic"],
+	) {
+		const relationship = {
+			id: generateId(),
+			vetId: form.getValues("id"),
+			vetClinicId: vetClinic.id,
+			vetClinic,
+			relationship: "full-time",
+		} satisfies ManageVetFormSchema["vetToVetClinicRelationships"][number];
+
+		if (!isNew) {
+			try {
+				await insertVetToVetClinicRelationshipMutation.mutateAsync(relationship);
+
+				toast({
+					title: "Created relationship",
+					description: `Relationship between vet clinic "${vetClinic.name}" and vet ${
+						form.getValues("givenName")
+							? `"${form.getValues("givenName")}${
+									form.getValues("familyName") ? " " + form.getValues("familyName") : ""
+							  }"`
+							: ""
+					} has been successfully created.`,
+				});
+			} catch (error) {
+				logInDevelopment(error);
+
+				toast({
+					title: "Failed to create relationship",
+					description: `Relationship between vet clinic "${vetClinic.name}" and vet ${
+						form.getValues("givenName")
+							? `"${form.getValues("givenName")}${
+									form.getValues("familyName") ? " " + form.getValues("familyName") : ""
+							  }"`
+							: ""
+					} failed to create. Please try again.`,
+				});
+			}
+		}
+
+		form.setValue("vetToVetClinicRelationships", [...vetToVetClinicRelationships.fields, relationship], {
+			shouldDirty: false,
+		});
+	}
+
 	return (
 		<>
 			<ManageVetClinicSheet
@@ -169,8 +215,14 @@ function VetToVetClinicRelationships({ isNew, variant }: { isNew: boolean; varia
 					defaultValues={{
 						name: typeof isCreateVetClinicSheetOpen === "string" ? isCreateVetClinicSheetOpen : undefined,
 					}}
-					onSuccessfulSubmit={() => {
+					onSuccessfulSubmit={(data) => {
 						searchVetClinicsInputRef?.current?.focus();
+						void addVetToVetClinicRelationship({
+							id: data.id,
+							name: data.name,
+							emailAddress: data.emailAddress ?? "",
+							phoneNumber: data.phoneNumber ?? "",
+						});
 					}}
 					withoutTrigger
 				/>
@@ -180,10 +232,10 @@ function VetToVetClinicRelationships({ isNew, variant }: { isNew: boolean; varia
 						ref={searchVetClinicsInputRef}
 						placeholder={
 							vetToVetClinicRelationships.fields.length === 0
-								? "Search vets clinics..."
+								? "Search vet clinics..."
 								: vetToVetClinicRelationships.fields.length === 1
 								? "1 vet clinic selected"
-								: `${vetToVetClinicRelationships.fields.length} vets clinics selected`
+								: `${vetToVetClinicRelationships.fields.length} vet clinics selected`
 						}
 						onSearch={async (searchTerm) => {
 							const res = await utils.app.vetClinics.search.fetch({ searchTerm });
@@ -204,47 +256,7 @@ function VetToVetClinicRelationships({ isNew, variant }: { isNew: boolean; varia
 								return;
 							}
 
-							const relationship = {
-								id: generateId(),
-								vetId: form.getValues("id"),
-								vetClinicId: vetClinic.id,
-								vetClinic,
-								relationship: "full-time",
-							} satisfies ManageVetFormSchema["vetToVetClinicRelationships"][number];
-
-							if (!isNew) {
-								try {
-									await insertVetToVetClinicRelationshipMutation.mutateAsync(relationship);
-
-									toast({
-										title: "Created relationship",
-										description: `Relationship between vet clinic "${vetClinic.name}" and vet ${
-											form.getValues("givenName")
-												? `"${form.getValues("givenName")}${
-														form.getValues("familyName") ? " " + form.getValues("familyName") : ""
-												  }"`
-												: ""
-										} has been successfully created.`,
-									});
-								} catch (error) {
-									logInDevelopment(error);
-
-									toast({
-										title: "Failed to create relationship",
-										description: `Relationship between vet clinic "${vetClinic.name}" and vet ${
-											form.getValues("givenName")
-												? `"${form.getValues("givenName")}${
-														form.getValues("familyName") ? " " + form.getValues("familyName") : ""
-												  }"`
-												: ""
-										} failed to create. Please try again.`,
-									});
-								}
-							}
-
-							form.setValue("vetToVetClinicRelationships", [...vetToVetClinicRelationships.fields, relationship], {
-								shouldDirty: false,
-							});
+							await addVetToVetClinicRelationship(vetClinic);
 						}}
 						renderActions={({ searchTerm }) => (
 							<MultiSelectSearchComboboxAction

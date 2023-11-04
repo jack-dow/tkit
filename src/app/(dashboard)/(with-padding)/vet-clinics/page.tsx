@@ -22,7 +22,7 @@ async function VetClinicsTableSSR({ searchParams }: { searchParams?: SearchParam
 export default function VetClinicsPage({ searchParams }: { searchParams?: SearchParams }) {
 	return (
 		<>
-			<PageHeader title="Manage Vets Clinics" back={{ href: "/" }} />
+			<PageHeader title="Manage Vet Clinics" back={{ href: "/" }} />
 
 			<Suspense fallback={<TableSkeleton rows={3} />}>
 				<VetClinicsTableSSR searchParams={searchParams} />

@@ -69,6 +69,42 @@ function DogToClientRelationships({ isNew }: { isNew: boolean }) {
 	const insertDogToClientRelationshipMutation = api.app.dogs.dogToClientRelationships.insert.useMutation();
 	const deleteDogToClientRelationshipMutation = api.app.dogs.dogToClientRelationships.delete.useMutation();
 
+	async function addDogToClientRelationship(client: ManageDogFormSchema["dogToClientRelationships"][number]["client"]) {
+		const relationship = {
+			id: generateId(),
+			dogId: form.getValues("id"),
+			clientId: client.id,
+			client,
+			relationship: "owner",
+		} satisfies ManageDogFormSchema["dogToClientRelationships"][number];
+
+		if (!isNew) {
+			try {
+				await insertDogToClientRelationshipMutation.mutateAsync(relationship);
+
+				toast({
+					title: "Created relationship",
+					description: `Relationship between client "${client.givenName} ${client.familyName}" and dog ${
+						form.getValues("givenName") ? `"${form.getValues("givenName")}"` : ""
+					} has been successfully created.`,
+				});
+			} catch (error) {
+				logInDevelopment(error);
+
+				toast({
+					title: "Failed to create relationship",
+					description: `Relationship between client "${client.givenName} ${client.familyName}" and dog ${
+						form.getValues("givenName") ? `"${form.getValues("givenName")}"` : ""
+					} failed to create. Please try again.`,
+				});
+			}
+		}
+
+		form.setValue("dogToClientRelationships", [...dogToClientRelationships.fields, relationship], {
+			shouldDirty: false,
+		});
+	}
+
 	return (
 		<>
 			<ManageClientSheet
@@ -181,8 +217,15 @@ function DogToClientRelationships({ isNew }: { isNew: boolean }) {
 									: undefined
 								: undefined,
 					}}
-					onSuccessfulSubmit={() => {
+					onSuccessfulSubmit={(data) => {
 						searchClientsInputRef?.current?.focus();
+						void addDogToClientRelationship({
+							id: data.id,
+							givenName: data.givenName,
+							familyName: data.familyName ?? "",
+							emailAddress: data.emailAddress ?? "",
+							phoneNumber: data.phoneNumber ?? "",
+						});
 					}}
 					withoutTrigger
 				/>
@@ -214,39 +257,7 @@ function DogToClientRelationships({ isNew }: { isNew: boolean }) {
 								return;
 							}
 
-							const relationship = {
-								id: generateId(),
-								dogId: form.getValues("id"),
-								clientId: client.id,
-								client,
-								relationship: "owner",
-							} satisfies ManageDogFormSchema["dogToClientRelationships"][number];
-
-							if (!isNew) {
-								try {
-									await insertDogToClientRelationshipMutation.mutateAsync(relationship);
-
-									toast({
-										title: "Created relationship",
-										description: `Relationship between client "${client.givenName} ${client.familyName}" and dog ${
-											form.getValues("givenName") ? `"${form.getValues("givenName")}"` : ""
-										} has been successfully created.`,
-									});
-								} catch (error) {
-									logInDevelopment(error);
-
-									toast({
-										title: "Failed to create relationship",
-										description: `Relationship between client "${client.givenName} ${client.familyName}" and dog ${
-											form.getValues("givenName") ? `"${form.getValues("givenName")}"` : ""
-										} failed to create. Please try again.`,
-									});
-								}
-							}
-
-							form.setValue("dogToClientRelationships", [...dogToClientRelationships.fields, relationship], {
-								shouldDirty: false,
-							});
+							await addDogToClientRelationship(client);
 						}}
 						renderActions={({ searchTerm }) => (
 							<MultiSelectSearchComboboxAction
