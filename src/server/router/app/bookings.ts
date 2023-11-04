@@ -120,13 +120,13 @@ export const bookingsRouter = createTRPCRouter({
 				extras: {
 					endDate: sql<Date>`date_add(${bookings.date}, INTERVAL ${bookings.duration} SECOND)`.as("end_date"),
 				},
-				where: (bookings, { and, eq, lte, gt, ne }) =>
+				where: (bookings, { and, eq, lt, gt, ne }) =>
 					and(
 						ne(bookings.id, input.bookingId),
 						eq(bookings.organizationId, ctx.user.organizationId),
 						eq(bookings.assignedToId, assignedToId),
 						and(
-							lte(bookings.date, endDate),
+							lt(bookings.date, endDate),
 							gt(sql<Date>`date_add(${bookings.date}, INTERVAL ${bookings.duration} SECOND)`, date),
 						),
 					),

@@ -178,7 +178,7 @@ function WeekView({
 
 	const [isLoading, setIsLoading] = React.useState(false);
 
-	const [canManageBookingDialogOpen, setCanManageBookingDialogOpen] = React.useState(false);
+	const [canManageBookingDialogOpen, setCanManageBookingDialogOpen] = React.useState(true);
 
 	const viewportSize = useViewportSize();
 
