@@ -28,7 +28,7 @@ async function WeeklyCalendar({ searchParams }: { searchParams: SearchParams }) 
 				.string()
 				.optional()
 				.catch(undefined)
-				.parse(searchParams?.assignedTo),
+				.parse(searchParams?.assignedToId),
 		}),
 		server.auth.user.organization.current.query(),
 	]);
